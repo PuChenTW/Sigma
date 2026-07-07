@@ -15,13 +15,12 @@ This is not a stock chatbot, a single-ticker analyzer, an auto-trading bot, or a
 | `docs/ai-investment-research-studio-codex-context.md` | Primary product and architecture context. Read this before major design work. |
 | `docs/ai-investment-research-studio-mvp-scope.md` | MVP scope, vertical slice, in/out of scope, and acceptance criteria. |
 | `docs/project-layout.md` | Repository layout and dependency direction. |
-| `apps/` | Future frontend and backend application entrypoints. |
-| `packages/domain/` | Future product domain model and lifecycle rules. |
-| `packages/schemas/` | Future API, persistence, and agent IO schemas. |
-| `packages/source-tools/` | Reusable Python package for RSS, media/transcript extraction, ASR fallback, and source-grounded LLM workflows. |
-| `services/` | Future product service boundaries for ingestion, orchestration, evidence, thesis, and committee workflows. |
+| `src/studio_api/` | FastAPI backend app scaffold and local persistence. |
+| `src/studio_domain/` | Product domain rules. |
+| `src/studio_schemas/` | API, persistence, and workflow schemas. |
+| `src/source_tools/` | Reusable RSS, media/transcript, ASR fallback, and source-grounded LLM helpers. |
 | `frontend_prototype/` | Claude Design frontend prototype showing intended UX. Treat as product/design reference, not production code. |
-| `packages/source-tools/tests/` | Focused tests for the reusable `source_tools` layer. |
+| `tests/` | Focused Python tests for source tools and Studio MVP foundation. |
 
 `source_tools` is useful infrastructure, but it is not the product. Do not force product concepts into `source_tools`; keep it reusable unless there is a clear tool-layer API need.
 
@@ -67,20 +66,12 @@ Investment Research Studio
 Current repository scaffold:
 
 ```text
-apps/
-  api/
-  web/
-packages/
-  domain/
-  schemas/
-  source-tools/
-services/
-  ingestion/
-  research-orchestrator/
-  evidence-service/
-  thesis-registry/
-  trading-committee/
-vendor/
+src/
+  studio_api/
+  studio_domain/
+  studio_schemas/
+  source_tools/
+tests/
 ```
 
 TradingAgents should be treated as a **Trading Committee Engine**, not as the whole product.

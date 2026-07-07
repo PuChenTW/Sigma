@@ -18,8 +18,9 @@ The product is an AI-assisted investment research operating system. The intended
 
 Known repository facts:
 
-- `apps/api` and `apps/web` are planned application boundaries, but no production app scaffold exists yet.
-- `services/` contains README-defined boundaries for ingestion, research orchestration, evidence, thesis registry, and trading committee workflows.
+- `src/studio_api` is the backend API boundary; no production Web app scaffold exists yet.
+- `src/studio_api`, `src/studio_domain`, and `src/studio_schemas` contain the first executable MVP backend foundation.
+- Empty placeholder `packages/`, `services/`, and `vendor/` directories were removed; future modules should be added only when implementation needs them.
 - `source_tools` is imported from `src/source_tools` during development. It provides reusable RSS, transcript, media, ASR wiring, and source-grounded LLM helpers without requiring a local wheel build.
 - `frontend_prototype/投資工作室.dc.html` is a workflow/design reference, not production application architecture.
 - Existing docs define TradingAgents as a future bounded Trading Committee engine, not the Studio domain model.

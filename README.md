@@ -15,31 +15,20 @@ This repository also contains `source_tools`, a reusable tool layer for RSS inge
 ## Repository Layout
 
 ```text
-apps/
-  api/                    Backend API app boundary
-  web/                    Frontend app boundary
-
 src/
   studio_api/             FastAPI backend source
   studio_domain/          Product domain rules
   studio_schemas/         Shared Pydantic schemas
   source_tools/           Reusable RSS/media/transcript/LLM package
 
-packages/
-  domain/                 Product domain model and lifecycle rules
-  schemas/                API, persistence, and agent IO schemas
-  source-tools/           Reusable source_tools tests and docs
-
-services/
-  ingestion/              Evidence ingestion and normalization
-  research-orchestrator/  Topic interpretation, task planning, desk coordination
-  evidence-service/       Evidence storage and retrieval
-  thesis-registry/        Thesis lifecycle and versioning
-  trading-committee/      Bounded TradingAgents / committee wrapper
+tests/
+  source_tools/           Reusable tool-layer tests
+  studio_api/             API scaffold and persistence tests
+  studio_domain/          Domain rule tests
+  studio_schemas/         Pydantic schema tests
 
 frontend_prototype/       Design prototype reference
 docs/                     Product, architecture, and planning docs
-vendor/                   Optional third-party vendored dependencies
 ```
 
 ## MVP

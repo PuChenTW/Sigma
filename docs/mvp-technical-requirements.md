@@ -7,9 +7,9 @@ The MVP should be implemented as a thin full-stack vertical slice with real doma
 Recommended runtime boundary:
 
 ```text
-apps/web -> apps/api -> services/domain workflow -> local persistence
-                         -> packages/source-tools where reusable helpers fit
-                         -> services/trading-committee stub
+Web UI -> src/studio_api -> src/studio_* workflow modules -> local persistence
+                         -> src/source_tools where reusable helpers fit
+                         -> trading committee boundary stub
 ```
 
 The MVP must run end-to-end without live network or LLM dependencies. Optional LLM synthesis can be added behind schema-validated interfaces after deterministic fixtures work.
@@ -20,11 +20,10 @@ The MVP must run end-to-end without live network or LLM dependencies. Optional L
 
 Known from the current repository:
 
-- `apps/api` is an intended FastAPI backend boundary. It currently contains README guidance, not executable app code.
-- `apps/web` is an intended Next.js frontend boundary. It currently contains README guidance, not executable app code.
-- `services/` contains README-defined service boundaries for ingestion, research orchestration, evidence, thesis registry, and trading committee.
-- `packages/domain` and `packages/schemas` are README-defined package boundaries, not implemented packages.
+- `src/studio_domain` and `src/studio_schemas` contain the first executable product contracts.
+- `src/studio_api` contains the FastAPI backend scaffold and local JSON persistence.
 - `source_tools` is imported from `src/source_tools` during development; `pyproject.toml` is configured not to build or install a local `source-tools` wheel.
+- Empty `packages/`, `services/`, and `vendor/` scaffold directories were removed. Add concrete modules only when implementation needs them.
 - `frontend_prototype/投資工作室.dc.html` is a design and workflow reference, not a production dependency.
 
 ### Reusable Components
@@ -40,16 +39,12 @@ Reusable today:
 
 The repo does not yet include:
 
-- FastAPI app scaffold.
 - Next.js app scaffold.
-- Product domain schemas.
-- Persistence layer.
 - Research workflow runner.
 - Evidence store.
 - Thesis registry.
 - Trading Committee implementation.
 - UI workflow screens.
-- Product-level tests.
 
 ### Technical Limits
 
@@ -81,15 +76,12 @@ flowchart TD
 
 ### Major Components
 
-- `apps/web`: Thin UI for topic submission, project status, thesis review, proposal review, and approve/reject.
-- `apps/api`: API routes, request validation, orchestration entrypoints, and response shaping.
-- `packages/schemas`: Shared Pydantic contracts for API, persistence, and agent/workflow IO.
-- `packages/domain`: Domain enums and lifecycle rules where useful. Keep simple for MVP.
-- `services/research-orchestrator`: Deterministic workflow runner and fixed desk task planner.
-- `services/evidence-service`: Evidence fixture loading and citation lookup.
-- `services/thesis-registry`: Thesis creation and status persistence.
-- `services/trading-committee`: Committee interface plus stubbed proposal generator.
-- `packages/source-tools`: Optional helper for RSS/transcript/source-grounded text processing. Product workflows remain outside it.
+- Future Web UI: Thin UI for topic submission, project status, thesis review, proposal review, and approve/reject.
+- `src/studio_api`: API routes, request validation, orchestration entrypoints, response shaping, and MVP local persistence.
+- `src/studio_schemas`: Shared Pydantic contracts for API, persistence, and agent/workflow IO.
+- `src/studio_domain`: Domain enums and lifecycle rules where useful. Keep simple for MVP.
+- Future `src/studio_workflows` or similarly concrete modules: deterministic workflow runner, evidence fixtures, thesis synthesis, and committee stub.
+- `src/source_tools`: Optional helper for RSS/transcript/source-grounded text processing. Product workflows remain outside it.
 
 ### Data Flow
 
@@ -155,8 +147,8 @@ Required for MVP planning:
 
 | Product Requirement | Technical Requirement | Component |
 | --- | --- | --- |
-| FR-001 | TR-001 | `apps/web`, `apps/api` |
-| FR-002 | TR-002 | `apps/api`, persistence |
+| FR-001 | TR-001 | Web UI, `src/studio_api` |
+| FR-002 | TR-002 | `src/studio_api`, persistence |
 | FR-003 | TR-003 | research orchestrator |
 | FR-004 | TR-004 | research orchestrator, persistence, UI |
 | FR-005 | TR-005 | evidence service, schemas |

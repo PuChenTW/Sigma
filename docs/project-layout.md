@@ -5,31 +5,20 @@ This repository contains the AI Investment Research Studio product plus the reus
 ## Layout
 
 ```text
-apps/
-  api/                    Backend API app boundary
-  web/                    Frontend app boundary
-
 src/
   studio_api/             FastAPI backend source
   studio_domain/          Product domain rules
   studio_schemas/         Shared Pydantic schemas
   source_tools/           Reusable source ingestion and media helpers
 
-packages/
-  domain/                 Product domain model and lifecycle rules
-  schemas/                API, persistence, and agent IO schemas
-  source-tools/           Reusable RSS/media/transcript/LLM tests and docs
-
-services/
-  ingestion/              Evidence ingestion and normalization
-  research-orchestrator/  Topic interpretation, task planning, desk coordination
-  evidence-service/       Evidence storage and retrieval
-  thesis-registry/        Thesis lifecycle and versioning
-  trading-committee/      Bounded TradingAgents / committee wrapper
+tests/
+  source_tools/           Reusable tool-layer tests
+  studio_api/             API scaffold and persistence tests
+  studio_domain/          Domain rule tests
+  studio_schemas/         Pydantic schema tests
 
 frontend_prototype/       Design prototype reference
 docs/                     Product, architecture, and planning docs
-vendor/                   Optional third-party vendored dependencies
 ```
 
 ## Dependency Direction
@@ -37,32 +26,32 @@ vendor/                   Optional third-party vendored dependencies
 Preferred direction:
 
 ```text
-apps
-  -> services
-  -> packages/domain + packages/schemas
-  -> packages/source-tools where reusable ingestion/media helpers are needed
+frontend/backend entrypoints
+  -> src/studio_api
+  -> src/studio_domain + src/studio_schemas
+  -> src/source_tools where reusable ingestion/media helpers are needed
 ```
 
-Trading committee integration should remain behind:
+Trading committee integration should remain behind a future explicit boundary:
 
 ```text
-apps/api
-  -> services/trading-committee
-  -> vendor/tradingagents or external TradingAgents dependency
+src/studio_api
+  -> src/studio_committee or src/studio_workflows
+  -> external TradingAgents dependency if adopted
 ```
 
 Avoid:
 
 ```text
-packages/source-tools -> apps
-packages/source-tools -> services
+src/source_tools -> apps
+src/source_tools -> product workflow state
 TradingAgents state -> Studio domain model
 frontend_prototype -> production runtime dependency
 ```
 
 ## Scaffold Policy
 
-Directories start with README files rather than empty packages. Add executable code only when implementing a concrete MVP slice.
+Add directories only when implementing a concrete MVP slice. Avoid empty placeholder scaffolds.
 
 When production app scaffolds are added:
 

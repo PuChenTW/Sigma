@@ -26,13 +26,13 @@ api:
 	uv run uvicorn studio_api.main:app --reload --app-dir src --host $(API_HOST) --port $(API_PORT)
 
 test:
-	uv run pytest packages/source-tools/tests apps/api/tests packages/schemas/tests packages/domain/tests -q
+	uv run pytest tests -q
 
 test-api:
-	uv run pytest apps/api/tests packages/schemas/tests packages/domain/tests -q
+	uv run pytest tests/studio_api tests/studio_schemas tests/studio_domain -q
 
 test-source-tools:
-	uv run pytest packages/source-tools/tests -q
+	uv run pytest tests/source_tools -q
 
 lint:
 	uv run ruff check .
@@ -43,4 +43,4 @@ format:
 check: test lint
 
 smoke-api:
-	uv run pytest apps/api/tests/test_api_scaffold.py -q
+	uv run pytest tests/studio_api/test_api_scaffold.py -q
