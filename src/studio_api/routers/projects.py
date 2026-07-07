@@ -8,9 +8,11 @@ from studio_schemas import (
     ActivityEvent,
     ActivityEventType,
     CreateResearchProjectRequest,
+    DecisionProposal,
     DemoWorkflowResponse,
     Evidence,
     EvidenceCitation,
+    InvestmentDecision,
     ProjectStatus,
     ResearchArtifact,
     ResearchProject,
@@ -80,6 +82,18 @@ def list_project_activity_events(project_id: str, store: StoreDep) -> list[Activ
 def list_project_artifacts(project_id: str, store: StoreDep) -> list[ResearchArtifact]:
     _get_project_or_404(store, project_id)
     return [artifact for artifact in store.list("artifacts") if artifact.project_id == project_id]
+
+
+@router.get("/{project_id}/decision-proposals", response_model=list[DecisionProposal])
+def list_project_decision_proposals(project_id: str, store: StoreDep) -> list[DecisionProposal]:
+    _get_project_or_404(store, project_id)
+    return [proposal for proposal in store.list("proposals") if proposal.project_id == project_id]
+
+
+@router.get("/{project_id}/investment-decisions", response_model=list[InvestmentDecision])
+def list_project_investment_decisions(project_id: str, store: StoreDep) -> list[InvestmentDecision]:
+    _get_project_or_404(store, project_id)
+    return [decision for decision in store.list("decisions") if decision.project_id == project_id]
 
 
 @router.get("/{project_id}/thesis", response_model=Thesis)

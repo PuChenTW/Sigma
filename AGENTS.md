@@ -18,10 +18,11 @@ This is not a stock chatbot, a single-ticker analyzer, an auto-trading bot, or a
 | `src/studio_api/` | FastAPI backend app scaffold and local persistence. |
 | `src/studio_domain/` | Product domain rules. |
 | `src/studio_schemas/` | API, persistence, and workflow schemas. |
-| `src/studio_workflows/` | Deterministic MVP task planning, SMR fixtures, artifact generation, and thesis synthesis. |
+| `src/studio_workflows/` | Deterministic MVP task planning, SMR fixtures, artifact generation, thesis synthesis, and committee proposal stub. |
 | `src/source_tools/` | Reusable RSS, media/transcript, ASR fallback, and source-grounded LLM helpers. |
+| `frontend/` | Thin Next.js workflow UI and Playwright E2E test for the MVP demo path. |
 | `frontend_prototype/` | Claude Design frontend prototype showing intended UX. Treat as product/design reference, not production code. |
-| `tests/` | Focused Python tests for source tools and Studio MVP foundation. |
+| `tests/` | Focused Python tests for source tools and Studio MVP backend/workflow foundation. |
 
 `source_tools` is useful infrastructure, but it is not the product. Do not force product concepts into `source_tools`; keep it reusable unless there is a clear tool-layer API need.
 
@@ -73,6 +74,7 @@ src/
   studio_schemas/
   studio_workflows/
   source_tools/
+frontend/
 tests/
   studio_workflows/
 ```
@@ -180,10 +182,15 @@ Simplicity beats cleverness. Delete aggressively.
 ```bash
 make sync
 make sync-asr   # only when testing real ASR backends
+make web-sync
 make api
+make web
 make test-source-tools
 make test-api
+make test-e2e
 make lint
+make web-typecheck
+make web-build
 make format
 make check
 ```
@@ -196,6 +203,7 @@ Local API JSON persistence defaults to `.local/studio-api.json`. Override it wit
 - Mock external network, ASR providers, market data providers, and LLM calls in tests.
 - Run `make test-source-tools` before handing off `source_tools` changes.
 - Run `make lint` for Python code edits.
+- Run `make web-typecheck` for frontend edits.
 - For frontend work, use Playwright to verify the actual user workflow, not only static rendering.
 
 ## Local Source Imports

@@ -19,6 +19,7 @@ src/
   studio_api/             FastAPI backend source
   studio_domain/          Product domain rules
   studio_schemas/         Shared Pydantic schemas
+  studio_workflows/       Deterministic workflow and committee stub
   source_tools/           Reusable RSS/media/transcript/LLM package
 
 tests/
@@ -26,7 +27,9 @@ tests/
   studio_api/             API scaffold and persistence tests
   studio_domain/          Domain rule tests
   studio_schemas/         Pydantic schema tests
+  studio_workflows/       Workflow and committee tests
 
+frontend/                 Thin Next.js MVP workflow UI and Playwright test
 frontend_prototype/       Design prototype reference
 docs/                     Product, architecture, and planning docs
 ```
@@ -90,16 +93,36 @@ summary = await summarize_content(
 ## Verify Current Code
 
 ```bash
+make check
+make web-build
+make test-e2e
+```
+
+Useful focused checks:
+
+```bash
 make test-source-tools
 make test-api
 make lint
+make web-typecheck
 ```
 
-## API Development
+## Local Development
 
 ```bash
 make sync
+make web-sync
 make api
+make web
 ```
 
 Local JSON persistence defaults to `.local/studio-api.json`. Override it with `STUDIO_API_DATA_FILE` when needed.
+
+The frontend reads the API base URL from `NEXT_PUBLIC_API_BASE_URL`; `make web` points it at the local FastAPI server.
+
+## MVP Limitations
+
+- Research output uses deterministic SMR fixtures; there is no live source discovery, market data, or LLM dependency in the demo path.
+- The Trading Committee is a stubbed boundary that returns a structured proposal; it does not run TradingAgents.
+- Approval or rejection records an investment decision only. It does not create trades, positions, or brokerage side effects.
+- Local JSON persistence is for development and demo use, not production deployment.

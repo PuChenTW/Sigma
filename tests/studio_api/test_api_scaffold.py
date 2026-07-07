@@ -24,6 +24,8 @@ def test_mvp_route_structure_is_registered() -> None:
     assert "/research-projects/{project_id}/evidence" in paths
     assert "/research-projects/{project_id}/citations" in paths
     assert "/research-projects/{project_id}/artifacts" in paths
+    assert "/research-projects/{project_id}/decision-proposals" in paths
+    assert "/research-projects/{project_id}/investment-decisions" in paths
     assert "/research-projects/{project_id}/thesis" in paths
     assert "/research-projects/{project_id}/run-demo-workflow" in paths
     assert "/research-projects/{project_id}/committee/evaluate" in paths

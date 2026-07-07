@@ -1,8 +1,54 @@
-from fastapi import APIRouter, HTTPException, status
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, status
+
+from studio_api.dependencies import get_store
+from studio_api.storage import JsonStore
+from studio_domain import ensure_citations_resolve
+from studio_schemas import ActivityEvent, ActivityEventType, DecisionProposal, EvidenceCitation, ResearchProject, Thesis
+from studio_workflows import evaluate_committee
 
 router = APIRouter(prefix="/research-projects/{project_id}/committee", tags=["committee"])
+StoreDep = Annotated[JsonStore, Depends(get_store)]
 
 
-@router.post("/evaluate", status_code=status.HTTP_501_NOT_IMPLEMENTED)
-def evaluate_project(project_id: str) -> None:
-    raise HTTPException(status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Committee evaluation is scheduled for MVP Phase 3.")
+@router.post("/evaluate", response_model=DecisionProposal)
+def evaluate_project(project_id: str, store: StoreDep) -> DecisionProposal:
+    project = _get_project_or_404(store, project_id)
+    thesis = _get_project_thesis_or_409(store, project.id)
+
+    try:
+        proposal = evaluate_committee(project, thesis)
+        ensure_citations_resolve(proposal.citation_ids, _project_citations(store, project.id))
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
+
+    existing = store.get("proposals", proposal.id)
+    if existing is not None:
+        return existing
+
+    proposal = store.create("proposals", proposal)
+    store.create(
+        "activity_events",
+        ActivityEvent(project_id=project.id, event_type=ActivityEventType.PROPOSAL_CREATED, message=f"Created committee proposal for {proposal.asset}."),
+    )
+    return proposal
+
+
+def _get_project_or_404(store: JsonStore, project_id: str) -> ResearchProject:
+    project = store.get("projects", project_id)
+    if project is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found.")
+    return project
+
+
+def _get_project_thesis_or_409(store: JsonStore, project_id: str) -> Thesis:
+    theses = [thesis for thesis in store.list("theses") if thesis.project_id == project_id]
+    if not theses:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Project has no thesis. Run the demo workflow first.")
+    return sorted(theses, key=lambda thesis: thesis.version)[-1]
+
+
+def _project_citations(store: JsonStore, project_id: str) -> list[EvidenceCitation]:
+    evidence_ids = {item.id for item in store.list("evidence") if item.project_id == project_id}
+    return [citation for citation in store.list("citations") if citation.evidence_id in evidence_ids]

@@ -9,7 +9,7 @@ src/
   studio_api/             FastAPI backend source
   studio_domain/          Product domain rules
   studio_schemas/         Shared Pydantic schemas
-  studio_workflows/       Deterministic MVP research workflow
+  studio_workflows/       Deterministic MVP research workflow and committee stub
   source_tools/           Reusable source ingestion and media helpers
 
 tests/
@@ -17,8 +17,9 @@ tests/
   studio_api/             API scaffold and persistence tests
   studio_domain/          Domain rule tests
   studio_schemas/         Pydantic schema tests
-  studio_workflows/       Workflow fixture and runner tests
+  studio_workflows/       Workflow fixture, committee, and runner tests
 
+frontend/                 Thin Next.js MVP workflow UI and Playwright E2E
 frontend_prototype/       Design prototype reference
 docs/                     Product, architecture, and planning docs
 ```
@@ -28,7 +29,10 @@ docs/                     Product, architecture, and planning docs
 Preferred direction:
 
 ```text
-frontend/backend entrypoints
+frontend
+  -> src/studio_api over HTTP
+
+backend entrypoints
   -> src/studio_api
   -> src/studio_workflows
   -> src/studio_domain + src/studio_schemas
@@ -39,14 +43,14 @@ Trading committee integration should remain behind a future explicit boundary:
 
 ```text
 src/studio_api
-  -> src/studio_committee or src/studio_workflows
+  -> src/studio_workflows committee boundary
   -> external TradingAgents dependency if adopted
 ```
 
 Avoid:
 
 ```text
-src/source_tools -> apps
+src/source_tools -> frontend
 src/source_tools -> product workflow state
 TradingAgents state -> Studio domain model
 frontend_prototype -> production runtime dependency

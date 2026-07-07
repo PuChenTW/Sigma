@@ -22,7 +22,8 @@ Known from the current repository:
 
 - `src/studio_domain` and `src/studio_schemas` contain the first executable product contracts.
 - `src/studio_api` contains the FastAPI backend scaffold and local JSON persistence.
-- `src/studio_workflows` contains the deterministic Phase 2 runner, fixed task templates, curated SMR evidence fixtures, artifact generation, and thesis synthesis.
+- `src/studio_workflows` contains the deterministic runner, fixed task templates, curated SMR evidence fixtures, artifact generation, thesis synthesis, and stubbed Trading Committee proposal boundary.
+- `frontend` contains the thin Next.js workflow UI and Playwright E2E demo test.
 - `source_tools` is imported from `src/source_tools` during development; `pyproject.toml` is configured not to build or install a local `source-tools` wheel.
 - Empty `packages/`, `services/`, and `vendor/` scaffold directories were removed. Add concrete modules only when implementation needs them.
 - `frontend_prototype/投資工作室.dc.html` is a design and workflow reference, not a production dependency.
@@ -40,15 +41,15 @@ Reusable today:
 
 The repo does not yet include:
 
-- Next.js app scaffold.
-- Trading Committee implementation.
-- UI workflow screens.
+- Real TradingAgents integration.
+- Production auth, deployment, or background job infrastructure.
+- Full portfolio dashboard or position lifecycle.
 
 ### Technical Limits
 
 - `source_tools` must remain product-agnostic. It must not store Studio workflows, portfolio state, hidden settings, or app-specific prompts.
 - TradingAgents must remain behind a Trading Committee boundary if added later.
-- The current repository supports the Phase 2 backend flow, but not the proposal/decision loop or runnable Web app yet.
+- The current repository supports the deterministic backend flow, stub proposal/decision loop, and runnable thin Web app.
 
 ## 3. Proposed MVP Architecture
 
@@ -74,11 +75,11 @@ flowchart TD
 
 ### Major Components
 
-- Future Web UI: Thin UI for topic submission, project status, thesis review, proposal review, and approve/reject.
+- Web UI: Thin Next.js UI for topic submission, project status, thesis review, proposal review, and approve/reject.
 - `src/studio_api`: API routes, request validation, orchestration entrypoints, response shaping, and MVP local persistence.
 - `src/studio_schemas`: Shared Pydantic contracts for API, persistence, and agent/workflow IO.
 - `src/studio_domain`: Domain enums and lifecycle rules where useful. Keep simple for MVP.
-- `src/studio_workflows`: Deterministic workflow runner, evidence fixtures, artifact generation, and thesis synthesis.
+- `src/studio_workflows`: Deterministic workflow runner, evidence fixtures, artifact generation, thesis synthesis, and stubbed committee proposal generator.
 - `src/source_tools`: Optional helper for RSS/transcript/source-grounded text processing. Product workflows remain outside it.
 
 ### Data Flow
@@ -106,7 +107,7 @@ MVP persistence can use SQLite or JSON-backed local storage. The data model shou
 Required for MVP planning:
 
 - Python 3.13 runtime already declared.
-- FastAPI, Pydantic, and frontend dependencies when app scaffolds are added.
+- FastAPI, Pydantic, Next.js, React, and Playwright for the deterministic demo path.
 - No live LLM, live network, market data, brokerage, or TradingAgents dependency is required for the deterministic demo path.
 
 ## 4. Architecture Decisions
@@ -315,6 +316,8 @@ GET /research-projects/{project_id}/evidence
 GET /research-projects/{project_id}/citations
 GET /research-projects/{project_id}/artifacts
 GET /research-projects/{project_id}/thesis
+GET /research-projects/{project_id}/decision-proposals
+GET /research-projects/{project_id}/investment-decisions
 POST /research-projects/{project_id}/run-demo-workflow
 POST /research-projects/{project_id}/committee/evaluate
 GET /decision-proposals/{proposal_id}
@@ -843,9 +846,9 @@ MVP-007.
 
 ### Acceptance Criteria
 
-- [ ] Committee endpoint creates proposal.
-- [ ] Proposal includes action, asset, conviction, horizon, sizing guidance, risks, rationale.
-- [ ] Proposal links to thesis and citations.
+- [x] Committee endpoint creates proposal.
+- [x] Proposal includes action, asset, conviction, horizon, sizing guidance, risks, rationale.
+- [x] Proposal links to thesis and citations.
 
 ### Verification
 
@@ -883,10 +886,10 @@ MVP-008.
 
 ### Acceptance Criteria
 
-- [ ] Pending proposal can be approved.
-- [ ] Pending proposal can be rejected.
-- [ ] Decision record is persisted.
-- [ ] Repeat decision attempts are rejected.
+- [x] Pending proposal can be approved.
+- [x] Pending proposal can be rejected.
+- [x] Decision record is persisted.
+- [x] Repeat decision attempts are rejected.
 
 ### Verification
 
@@ -927,10 +930,10 @@ MVP-004, MVP-007, MVP-008, MVP-009.
 
 ### Acceptance Criteria
 
-- [ ] User can submit SMR topic.
-- [ ] User can inspect tasks and thesis.
-- [ ] User can review proposal.
-- [ ] User can approve or reject.
+- [x] User can submit SMR topic.
+- [x] User can inspect tasks and thesis.
+- [x] User can review proposal.
+- [x] User can approve or reject.
 
 ### Verification
 
@@ -967,9 +970,9 @@ MVP-010.
 
 ### Acceptance Criteria
 
-- [ ] E2E test completes the primary workflow.
-- [ ] Test does not require network or LLM.
-- [ ] Failure output identifies broken step.
+- [x] E2E test completes the primary workflow.
+- [x] Test does not require network or LLM.
+- [x] Failure output identifies broken step.
 
 ### Verification
 
@@ -1007,10 +1010,10 @@ MVP-006, MVP-009, MVP-011.
 
 ### Acceptance Criteria
 
-- [ ] Commands are documented.
-- [ ] Tests pass.
-- [ ] Citation links are checked.
-- [ ] Known MVP limitations are documented.
+- [x] Commands are documented.
+- [x] Tests pass.
+- [x] Citation links are checked.
+- [x] Known MVP limitations are documented.
 
 ### Verification
 
