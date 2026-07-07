@@ -1,7 +1,7 @@
 from pydantic import Field
 
 from studio_schemas.enums import DecisionType, Priority
-from studio_schemas.models import NonEmptyText, RecordId, StudioModel
+from studio_schemas.models import ActivityEvent, Evidence, EvidenceCitation, NonEmptyText, RecordId, ResearchArtifact, ResearchProject, ResearchTask, StudioModel, Thesis
 
 
 class CreateResearchProjectRequest(StudioModel):
@@ -26,3 +26,13 @@ class NotImplementedResponse(StudioModel):
 class InvestmentDecisionResponse(StudioModel):
     proposal_id: RecordId
     decision: DecisionType
+
+
+class DemoWorkflowResponse(StudioModel):
+    project: ResearchProject
+    tasks: list[ResearchTask]
+    evidence: list[Evidence]
+    citations: list[EvidenceCitation]
+    artifacts: list[ResearchArtifact]
+    thesis: Thesis
+    activity_events: list[ActivityEvent]

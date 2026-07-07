@@ -43,7 +43,7 @@ src = ["src"]
 select = ["E", "F", "I"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["source_tools", "studio_api", "studio_domain", "studio_schemas"]
+known-first-party = ["source_tools", "studio_api", "studio_domain", "studio_schemas", "studio_workflows"]
 
 [tool.ruff.format]
 quote-style = "double"

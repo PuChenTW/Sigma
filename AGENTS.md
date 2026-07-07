@@ -18,6 +18,7 @@ This is not a stock chatbot, a single-ticker analyzer, an auto-trading bot, or a
 | `src/studio_api/` | FastAPI backend app scaffold and local persistence. |
 | `src/studio_domain/` | Product domain rules. |
 | `src/studio_schemas/` | API, persistence, and workflow schemas. |
+| `src/studio_workflows/` | Deterministic MVP task planning, SMR fixtures, artifact generation, and thesis synthesis. |
 | `src/source_tools/` | Reusable RSS, media/transcript, ASR fallback, and source-grounded LLM helpers. |
 | `frontend_prototype/` | Claude Design frontend prototype showing intended UX. Treat as product/design reference, not production code. |
 | `tests/` | Focused Python tests for source tools and Studio MVP foundation. |
@@ -70,8 +71,10 @@ src/
   studio_api/
   studio_domain/
   studio_schemas/
+  studio_workflows/
   source_tools/
 tests/
+  studio_workflows/
 ```
 
 TradingAgents should be treated as a **Trading Committee Engine**, not as the whole product.

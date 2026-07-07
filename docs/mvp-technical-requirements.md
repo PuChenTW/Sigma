@@ -22,6 +22,7 @@ Known from the current repository:
 
 - `src/studio_domain` and `src/studio_schemas` contain the first executable product contracts.
 - `src/studio_api` contains the FastAPI backend scaffold and local JSON persistence.
+- `src/studio_workflows` contains the deterministic Phase 2 runner, fixed task templates, curated SMR evidence fixtures, artifact generation, and thesis synthesis.
 - `source_tools` is imported from `src/source_tools` during development; `pyproject.toml` is configured not to build or install a local `source-tools` wheel.
 - Empty `packages/`, `services/`, and `vendor/` scaffold directories were removed. Add concrete modules only when implementation needs them.
 - `frontend_prototype/投資工作室.dc.html` is a design and workflow reference, not a production dependency.
@@ -40,9 +41,6 @@ Reusable today:
 The repo does not yet include:
 
 - Next.js app scaffold.
-- Research workflow runner.
-- Evidence store.
-- Thesis registry.
 - Trading Committee implementation.
 - UI workflow screens.
 
@@ -50,7 +48,7 @@ The repo does not yet include:
 
 - `source_tools` must remain product-agnostic. It must not store Studio workflows, portfolio state, hidden settings, or app-specific prompts.
 - TradingAgents must remain behind a Trading Committee boundary if added later.
-- The current repository supports planning and reusable source helpers, but not a runnable product app yet.
+- The current repository supports the Phase 2 backend flow, but not the proposal/decision loop or runnable Web app yet.
 
 ## 3. Proposed MVP Architecture
 
@@ -80,7 +78,7 @@ flowchart TD
 - `src/studio_api`: API routes, request validation, orchestration entrypoints, response shaping, and MVP local persistence.
 - `src/studio_schemas`: Shared Pydantic contracts for API, persistence, and agent/workflow IO.
 - `src/studio_domain`: Domain enums and lifecycle rules where useful. Keep simple for MVP.
-- Future `src/studio_workflows` or similarly concrete modules: deterministic workflow runner, evidence fixtures, thesis synthesis, and committee stub.
+- `src/studio_workflows`: Deterministic workflow runner, evidence fixtures, artifact generation, and thesis synthesis.
 - `src/source_tools`: Optional helper for RSS/transcript/source-grounded text processing. Product workflows remain outside it.
 
 ### Data Flow
@@ -312,18 +310,16 @@ POST /research-projects
 GET /research-projects
 GET /research-projects/{project_id}
 GET /research-projects/{project_id}/tasks
+GET /research-projects/{project_id}/activity-events
+GET /research-projects/{project_id}/evidence
+GET /research-projects/{project_id}/citations
 GET /research-projects/{project_id}/artifacts
 GET /research-projects/{project_id}/thesis
+POST /research-projects/{project_id}/run-demo-workflow
 POST /research-projects/{project_id}/committee/evaluate
 GET /decision-proposals/{proposal_id}
 POST /decision-proposals/{proposal_id}/approve
 POST /decision-proposals/{proposal_id}/reject
-```
-
-Optional if implementation wants explicit workflow control:
-
-```text
-POST /research-projects/{project_id}/run-demo-workflow
 ```
 
 ### Agent/Workflow Boundary

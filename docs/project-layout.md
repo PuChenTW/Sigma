@@ -9,6 +9,7 @@ src/
   studio_api/             FastAPI backend source
   studio_domain/          Product domain rules
   studio_schemas/         Shared Pydantic schemas
+  studio_workflows/       Deterministic MVP research workflow
   source_tools/           Reusable source ingestion and media helpers
 
 tests/
@@ -16,6 +17,7 @@ tests/
   studio_api/             API scaffold and persistence tests
   studio_domain/          Domain rule tests
   studio_schemas/         Pydantic schema tests
+  studio_workflows/       Workflow fixture and runner tests
 
 frontend_prototype/       Design prototype reference
 docs/                     Product, architecture, and planning docs
@@ -28,6 +30,7 @@ Preferred direction:
 ```text
 frontend/backend entrypoints
   -> src/studio_api
+  -> src/studio_workflows
   -> src/studio_domain + src/studio_schemas
   -> src/source_tools where reusable ingestion/media helpers are needed
 ```

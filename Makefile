@@ -29,7 +29,7 @@ test:
 	uv run pytest tests -q
 
 test-api:
-	uv run pytest tests/studio_api tests/studio_schemas tests/studio_domain -q
+	uv run pytest tests/studio_api tests/studio_schemas tests/studio_domain tests/studio_workflows -q
 
 test-source-tools:
 	uv run pytest tests/source_tools -q

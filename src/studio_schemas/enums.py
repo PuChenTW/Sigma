@@ -12,6 +12,7 @@ class ActivityEventType(StrEnum):
     TASK_FAILED = "task_failed"
     TASK_STARTED = "task_started"
     THESIS_CREATED = "thesis_created"
+    WORKFLOW_STARTED = "workflow_started"
 
 
 class DecisionType(StrEnum):

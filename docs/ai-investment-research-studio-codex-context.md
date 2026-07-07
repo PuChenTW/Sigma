@@ -644,6 +644,7 @@ investment-studio/
     studio_api/
     studio_domain/
     studio_schemas/
+    studio_workflows/
     source_tools/
 
   tests/
@@ -651,6 +652,7 @@ investment-studio/
     studio_api/
     studio_domain/
     studio_schemas/
+    studio_workflows/
 ```
 
 未實作前不要保留空的 `packages/`、`services/`、`vendor/` scaffold。當 workflow、committee 或外部 TradingAgents integration 變成具體需求時，再新增具名模組或依賴邊界。
