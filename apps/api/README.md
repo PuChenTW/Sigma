@@ -26,3 +26,13 @@ Backend API for AI Investment Research Studio.
 - `POST /decision-proposals/{proposal_id}/approve`
 - `POST /decision-proposals/{proposal_id}/reject`
 
+## Local Development
+
+```bash
+make sync
+make api
+make test-api
+make smoke-api
+```
+
+Local JSON persistence defaults to `.local/studio-api.json`. Override it with `STUDIO_API_DATA_FILE` when needed.
