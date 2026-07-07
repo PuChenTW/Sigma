@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#f3f4f7;color:#191c22;font-family:'Noto Sans TC',system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  ::selection{background:rgba(55,93,251,.16)}
+  .num{font-family:'IBM Plex Mono','Noto Sans TC',monospace;font-feature-settings:'tnum' 1;letter-spacing:-.01em}
+  .clamp2{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .clamp3{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .sc::-webkit-scrollbar{width:11px;height:11px}
+  .sc::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:9px;border:3px solid #f3f4f7}
+  .sc::-webkit-scrollbar-thumb:hover{background:#bfc4d0}
+  @keyframes blip{0%,100%{opacity:1}50%{opacity:.35}}
+  .live{animation:blip 1.8s ease-in-out infinite}
+  @media (max-width:1180px){
+    .kpigrid{grid-template-columns:1fr 1fr !important}
+    .teamgrid{grid-template-columns:repeat(3,minmax(0,1fr)) !important}
+  }
+  @media (max-width:820px){
+    .sidebar{display:none !important}
+    .mobnav{display:flex !important}
+    .main{height:100dvh !important}
+    .pagepad{padding:16px 16px 94px !important;max-width:100% !important}
+    .topbar{padding:12px 16px !important}
+    .hidesm{display:none !important}
+    .kpigrid{grid-template-columns:1fr 1fr !important}
+    .teamgrid{grid-template-columns:1fr 1fr !important}
+    .twocol{grid-template-columns:1fr !important;gap:16px !important;margin-top:20px !important}
+    .statgrid4{grid-template-columns:1fr 1fr !important}
+    .kpinum{font-size:20px !important}
+    .modalcard{width:100% !important}
+  }
+</style>
+</helmet>
+<div style="display:flex;min-height:100vh">
+
+  <aside class="sidebar" style="width:238px;flex:none;background:#fbfbfd;border-right:1px solid #e8eaf0;display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;height:100vh">
+    <div style="display:flex;align-items:center;gap:11px;padding:0 8px 22px">
+      <div style="width:32px;height:32px;border-radius:9px;background:#191c22;color:#fff;display:flex;align-items:center;justify-content:center;font:700 15px 'Space Grotesk',sans-serif">S</div>
+      <div>
+        <div style="font:700 15px 'Space Grotesk',sans-serif;color:#191c22;line-height:1">Studio</div>
+        <div style="font-size:11px;color:#9aa1af;margin-top:2px">投資研究工作室</div>
+      </div>
+    </div>
+
+    <nav style="display:flex;flex-direction:column;gap:3px">
+      <div onClick="{{ nav.dashboard.go }}" style="{{ nav.dashboard.style }}">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2.5" y="2.5" width="6" height="6" rx="1.5"/><rect x="11.5" y="2.5" width="6" height="6" rx="1.5"/><rect x="2.5" y="11.5" width="6" height="6" rx="1.5"/><rect x="11.5" y="11.5" width="6" height="6" rx="1.5"/></svg>
+        <span>綜合儀表板</span>
+      </div>
+      <div onClick="{{ nav.desk.go }}" style="{{ nav.desk.style }}">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 2.5 3 6v4.5c0 4 3 6.4 7 7.5 4-1.1 7-3.5 7-7.5V6l-7-3.5Z" stroke-linejoin="round"/><path d="m7.3 10 1.9 2 3.8-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="flex:1">決策台</span>
+        <sc-if value="{{ hasProposals }}" hint-placeholder-val="{{ true }}"><span style="min-width:19px;height:19px;padding:0 5px;border-radius:10px;background:#c0392b;color:#fff;font:600 11px 'IBM Plex Mono',monospace;display:inline-flex;align-items:center;justify-content:center">{{ deskPending }}</span></sc-if>
+      </div>
+      <div onClick="{{ nav.positions.go }}" style="{{ nav.positions.style }}">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 16.5V9M8 16.5V4.5M13 16.5V11M18 16.5V6.5" stroke-linecap="round"/></svg>
+        <span>交易部位</span>
+      </div>
+      <div onClick="{{ nav.research.go }}" style="{{ nav.research.style }}">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="2.5" width="12" height="15" rx="2"/><path d="M7 6.5h6M7 10h6M7 13.5h3.5" stroke-linecap="round"/></svg>
+        <span>研究報告</span>
+      </div>
+      <div onClick="{{ nav.assign.go }}" style="{{ nav.assign.style }}">
+        <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M17 3L9 11M17 3l-5.5 14-3-6.5L2 7.5 17 3Z" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        <span>派研究任務</span>
+      </div>
+    </nav>
+
+    <div style="margin-top:auto;border-top:1px solid #ecedf2;padding-top:14px">
+      <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.09em;color:#aab0bd;padding:0 8px 9px">團隊在線 · 5</div>
+      <sc-for list="{{ teamMini }}" as="m" hint-placeholder-count="5">
+        <div style="display:flex;align-items:center;gap:9px;padding:5px 8px">
+          <span style="width:6px;height:6px;border-radius:50%;background:{{ m.dot }}" class="{{ m.pulse }}"></span>
+          <span style="font-size:12px;color:#5a626f;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.role }}</span>
+          <span style="font-size:10.5px;color:{{ m.dot }}">{{ m.statusLabel }}</span>
+        </div>
+      </sc-for>
+    </div>
+  </aside>
+
+  <main class="sc main" style="flex:1;height:100vh;overflow-y:auto">
+    <header class="topbar" style="position:sticky;top:0;z-index:5;background:rgba(243,244,247,.82);backdrop-filter:blur(10px);border-bottom:1px solid #e8eaf0;padding:15px 34px;display:flex;align-items:center;gap:18px">
+      <div style="flex:1;min-width:0">
+        <div style="font:700 18px 'Noto Sans TC',sans-serif;color:#191c22;line-height:1.2">{{ pageTitle }}</div>
+        <div style="font-size:12.5px;color:#8a91a0;margin-top:3px">{{ pageSub }}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:#fff;border:1px solid #e8eaf0;border-radius:11px">
+        <span style="font-size:11px;color:#9aa1af">未實現損益</span>
+        <span class="num" style="font-size:14px;font-weight:600;color:{{ pnlColor }}">{{ pnlPill }}</span>
+      </div>
+      <div onClick="{{ goAssign }}" class="hidesm" style="display:flex;align-items:center;gap:8px;padding:9px 16px;background:{{ accent }};color:#fff;border-radius:11px;font-size:13px;font-weight:500;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.12)">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 3L9 11M17 3l-5.5 14-3-6.5L2 7.5 17 3Z" stroke-linejoin="round" stroke-linecap="round"/></svg>
+        派研究任務
+      </div>
+    </header>
+
+    <div class="pagepad" style="padding:28px 34px 60px;max-width:1240px">
+
+      <!-- ============ DASHBOARD ============ -->
+      <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <sc-if value="{{ hasProposals }}" hint-placeholder-val="{{ true }}">
+            <div onClick="{{ goDesk }}" style="display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #e8eaf0;border-left:3px solid #375dfb;border-radius:14px;padding:15px 20px;margin-bottom:20px;cursor:pointer;box-shadow:0 1px 2px rgba(16,24,40,.03)">
+              <div style="width:32px;height:32px;border-radius:9px;background:#191c22;color:#fff;display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;flex:none">TR</div>
+              <div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:#191c22">交易員有 {{ deskPending }} 筆策略提案等待你裁決</div><div style="font-size:12px;color:#8a91a0;margin-top:2px">你保有最終裁量權 — 核准後回報成交，或直接否決</div></div>
+              <span style="font-size:12.5px;font-weight:500;color:#375dfb;flex:none">前往決策台 →</span>
+            </div>
+          </sc-if>
+          <div class="kpigrid" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+              <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.03);padding:18px 20px">
+                <div style="font-size:12px;color:#8a91a0;font-weight:500">{{ k.label }}</div>
+                <div class="num kpinum" style="font-size:27px;font-weight:600;margin-top:11px;color:#191c22">{{ k.value }}</div>
+                <div style="margin-top:9px;font-size:12px;color:{{ k.color }}" class="num">{{ k.delta }} <span style="color:#a3a9b6">{{ k.sub }}</span></div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin:34px 0 15px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#aab0bd">TEAM</span>
+              <h2 style="font:700 16px 'Noto Sans TC';margin:0;color:#191c22">研究團隊狀態</h2>
+            </div>
+          </div>
+          <div class="teamgrid" style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px">
+            <sc-for list="{{ team }}" as="m" hint-placeholder-count="5">
+              <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.03);padding:16px">
+                <div style="display:flex;align-items:center;justify-content:space-between">
+                  <div style="width:34px;height:34px;border-radius:10px;background:{{ m.avBg }};color:{{ m.avColor }};display:flex;align-items:center;justify-content:center;font:600 12px 'IBM Plex Mono',monospace">{{ m.tag }}</div>
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:{{ m.statusColor }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ m.statusColor }}" class="{{ m.pulse }}"></span>{{ m.statusLabel }}</span>
+                </div>
+                <div style="font:600 14px 'Noto Sans TC';margin-top:13px;color:#191c22">{{ m.name }}</div>
+                <div style="font-size:11px;color:#9aa1af;margin-top:2px">{{ m.role }}</div>
+                <div class="clamp2" style="font-size:12px;line-height:1.55;color:#69707d;margin-top:10px;min-height:37px">{{ m.focus }}</div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:24px;margin-top:34px;align-items:start" class="twocol">
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:15px">
+                <span style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#aab0bd">RESEARCH</span>
+                <h2 style="font:700 16px 'Noto Sans TC';margin:0;color:#191c22">進行中的研究</h2>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:13px">
+                <sc-for list="{{ theses }}" as="t" hint-placeholder-count="4">
+                  <div onClick="{{ t.open }}" style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.03);padding:18px 20px;cursor:pointer">
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                      <span style="display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;color:{{ t.facetColor }};background:{{ t.facetBg }}">{{ t.facetLabel }}</span>
+                      <span style="font-size:11px;color:#9aa1af">信心度 <b class="num" style="color:{{ t.convColor }};font-weight:600">{{ t.convictionPct }}</b></span>
+                    </div>
+                    <div style="font:600 15px/1.45 'Noto Sans TC';margin-top:12px;color:#191c22">{{ t.title }}</div>
+                    <div class="clamp2" style="font-size:12.5px;line-height:1.6;color:#69707d;margin-top:7px">{{ t.summary }}</div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:13px;border-top:1px solid #f0f1f5">
+                      <span style="font-size:11.5px;color:#9aa1af">{{ t.researcher }} · {{ t.date }}</span>
+                      <span style="font-size:12px;font-weight:500;color:{{ accent }}">查看完整報告 →</span>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:15px">
+                <span style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#aab0bd">POSITIONS</span>
+                <h2 style="font:700 16px 'Noto Sans TC';margin:0;color:#191c22">目前部位</h2>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:13px">
+                <sc-for list="{{ trades }}" as="p" hint-placeholder-count="4">
+                  <div onClick="{{ p.open }}" style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.03);padding:16px 18px;cursor:pointer">
+                    <div style="display:flex;align-items:center;justify-content:space-between">
+                      <div style="display:flex;align-items:center;gap:9px">
+                        <span class="num" style="font-size:14px;font-weight:600;color:#191c22">{{ p.symbol }}</span>
+                        <span style="font-size:10.5px;font-weight:500;padding:2px 7px;border-radius:5px;color:{{ p.dirColor }};background:{{ p.dirBg }}">{{ p.dirLabel }}</span>
+                      </div>
+                      <span class="num" style="font-size:13px;font-weight:600;color:{{ p.pnlColor }}">{{ p.pnlPctText }}</span>
+                    </div>
+                    <div style="font-size:12px;color:#8a91a0;margin-top:6px">{{ p.name }}</div>
+                    <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:12px">
+                      <div>
+                        <div style="font-size:10.5px;color:#a3a9b6">現價</div>
+                        <div class="num" style="font-size:16px;font-weight:600;color:#191c22;margin-top:2px">{{ p.currentText }}</div>
+                      </div>
+                      <div style="text-align:right">
+                        <div style="font-size:10.5px;color:#a3a9b6">未實現</div>
+                        <div class="num" style="font-size:13px;font-weight:600;color:{{ p.pnlColor }};margin-top:2px">{{ p.pnlText }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ DECISION DESK ============ -->
+      <sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <sc-if value="{{ hasProposals }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <sc-for list="{{ proposals }}" as="p" hint-placeholder-count="3">
+                <div style="background:#fff;border:1px solid #e8eaf0;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.03);padding:24px 26px">
+                  <div style="display:flex;align-items:center;gap:11px">
+                    <div style="width:30px;height:30px;border-radius:9px;background:#191c22;color:#fff;display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace;flex:none">TR</div>
+                    <div style="flex:1"><div style="font-size:12.5px;font-weight:600;color:#191c22">交易員提案</div><div style="font-size:11px;color:#9aa1af">{{ p.time }}</div></div>
+                    <span style="font-size:11px;color:#9aa1af">信心度 <b class="num" style="color:{{ p.convColor }};font-weight:600">{{ p.convictionPct }}</b></span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:11px;margin-top:18px;flex-wrap:wrap">
+                    <span class="num" style="font-size:20px;font-weight:600;color:#191c22">{{ p.symbol }}</span>
+                    <span style="font-size:12px;color:#8a91a0">{{ p.name }}</span>
+                    <span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:6px;color:{{ p.dirColor }};background:{{ p.dirBg }}">{{ p.dirLabel }}</span>
+                    <span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:6px;color:{{ p.riskColor }};background:{{ p.riskBg }}">{{ p.riskLabel }}</span>
+                  </div>
+                  <div class="statgrid4" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px">
+                    <div style="background:#fafbfc;border:1px solid #f0f1f5;border-radius:11px;padding:11px 13px"><div style="font-size:10.5px;color:#a3a9b6">建議進場</div><div class="num" style="font-size:15px;font-weight:600;margin-top:3px">{{ p.entryText }}</div></div>
+                    <div style="background:#fafbfc;border:1px solid #f0f1f5;border-radius:11px;padding:11px 13px"><div style="font-size:10.5px;color:#a3a9b6">建議部位</div><div class="num" style="font-size:15px;font-weight:600;margin-top:3px">{{ p.sizeText }}</div></div>
+                    <div style="background:#f2f9f5;border:1px solid #d9ede4;border-radius:11px;padding:11px 13px"><div style="font-size:10.5px;color:#0f8a5f">停利</div><div class="num" style="font-size:15px;font-weight:600;margin-top:3px;color:#0f8a5f">{{ p.tpText }}</div></div>
+                    <div style="background:#fcf3f1;border:1px solid #f0d9d5;border-radius:11px;padding:11px 13px"><div style="font-size:10.5px;color:#c0392b">停損</div><div class="num" style="font-size:15px;font-weight:600;margin-top:3px;color:#c0392b">{{ p.slText }}</div></div>
+                  </div>
+                  <div style="font-size:13px;line-height:1.7;color:#5a626f;margin-top:16px">{{ p.narrative }}</div>
+                  <div style="background:#f7f8fb;border:1px solid #eceef3;border-radius:12px;padding:14px 16px;margin-top:14px">
+                    <div style="font-size:11px;color:#9aa1af;margin-bottom:6px">交易員綜合判斷</div>
+                    <div style="font-size:13px;line-height:1.7;color:#4a515e">{{ p.rationale }}</div>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;flex-wrap:wrap">
+                    <div style="display:flex;gap:7px;flex-wrap:wrap">
+                      <sc-for list="{{ p.chips }}" as="c" hint-placeholder-count="2">
+                        <span onClick="{{ c.open }}" style="font-size:11px;padding:3px 10px;border-radius:20px;color:{{ c.color }};background:{{ c.bg }};cursor:pointer">{{ c.label }} ↗</span>
+                      </sc-for>
+                    </div>
+                    <div style="display:flex;gap:10px;flex:none">
+                      <div onClick="{{ p.reject }}" style="padding:10px 20px;border-radius:11px;font-size:13px;font-weight:500;cursor:pointer;color:#c0392b;background:#fff;border:1.5px solid #f0d9d5">否決</div>
+                      <div onClick="{{ p.approve }}" style="padding:10px 22px;border-radius:11px;font-size:13px;font-weight:600;cursor:pointer;color:#fff;background:{{ accent }};box-shadow:0 1px 2px rgba(16,24,40,.12)">同意並執行</div>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noProposals }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#fff;border:1px dashed #dfe2ea;border-radius:16px;padding:44px;text-align:center">
+              <div style="font-size:14px;font-weight:600;color:#191c22">目前沒有待裁決的提案</div>
+              <div style="font-size:12.5px;color:#8a91a0;margin-top:6px">交易員提出新策略時會出現在這裡，等你核准或否決。</div>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;align-items:center;gap:10px;margin:32px 0 15px">
+            <span style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#aab0bd">HISTORY</span>
+            <h2 style="font:700 16px 'Noto Sans TC';margin:0;color:#191c22">決策紀錄</h2>
+          </div>
+          <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.03);overflow:hidden">
+            <sc-for list="{{ decisions }}" as="d" hint-placeholder-count="2">
+              <div style="display:flex;align-items:center;gap:14px;padding:14px 20px;border-top:1px solid #f2f3f7">
+                <span style="width:24px;height:24px;border-radius:50%;background:{{ d.bg }};color:{{ d.color }};display:flex;align-items:center;justify-content:center;font-size:12px;flex:none">{{ d.icon }}</span>
+                <span style="font-size:13px;font-weight:600;color:#191c22;flex:none;min-width:120px">{{ d.symbol }}</span>
+                <span style="font-size:11px;font-weight:500;padding:2px 9px;border-radius:6px;color:{{ d.color }};background:{{ d.bg }};flex:none">{{ d.label }}</span>
+                <span style="font-size:12.5px;color:#69707d;flex:1;min-width:0">{{ d.note }}</span>
+                <span style="font-size:11.5px;color:#a3a9b6;flex:none">{{ d.when }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ POSITIONS LIST ============ -->
+      <sc-if value="{{ isPositions }}" hint-placeholder-val="{{ true }}">
+        <div class="twocol" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <sc-for list="{{ trades }}" as="p" hint-placeholder-count="4">
+            <div onClick="{{ p.open }}" style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.03);padding:20px 22px;cursor:pointer">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between">
+                <div>
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <span class="num" style="font-size:16px;font-weight:600;color:#191c22">{{ p.symbol }}</span>
+                    <span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:6px;color:{{ p.dirColor }};background:{{ p.dirBg }}">{{ p.dirLabel }}</span>
+                    <span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:6px;color:{{ p.riskColor }};background:{{ p.riskBg }}">{{ p.riskLabel }}</span>
+                  </div>
+                  <div style="font-size:12.5px;color:#8a91a0;margin-top:6px">{{ p.name }}</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="num" style="font-size:18px;font-weight:600;color:{{ p.pnlColor }}">{{ p.pnlPctText }}</div>
+                  <div class="num" style="font-size:12px;color:{{ p.pnlColor }};margin-top:2px">{{ p.pnlText }}</div>
+                </div>
+              </div>
+              <div class="clamp2" style="font-size:12.5px;line-height:1.6;color:#69707d;margin-top:14px">{{ p.narrative }}</div>
+              <div class="statgrid4" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px;padding-top:15px;border-top:1px solid #f0f1f5">
+                <div><div style="font-size:10.5px;color:#a3a9b6">進場</div><div class="num" style="font-size:13px;font-weight:500;margin-top:3px">{{ p.entryText }}</div></div>
+                <div><div style="font-size:10.5px;color:#a3a9b6">現價</div><div class="num" style="font-size:13px;font-weight:500;margin-top:3px">{{ p.currentText }}</div></div>
+                <div><div style="font-size:10.5px;color:#0f8a5f">停利</div><div class="num" style="font-size:13px;font-weight:500;margin-top:3px;color:#0f8a5f">{{ p.tpText }}</div></div>
+                <div><div style="font-size:10.5px;color:#c0392b">停損</div><div class="num" style="font-size:13px;font-weight:500;margin-top:3px;color:#c0392b">{{ p.slText }}</div></div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px">
+                <span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;color:{{ p.statusColor }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ p.statusColor }}"></span>{{ p.statusLabel }}</span>
+                <span onClick="{{ p.report }}" style="font-size:12px;font-weight:500;color:{{ accent }};padding:6px 12px;border:1px solid #e8eaf0;border-radius:9px;cursor:pointer">回報現況</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- ============ RESEARCH LIST ============ -->
+      <sc-if value="{{ isResearch }}" hint-placeholder-val="{{ true }}">
+        <div class="twocol" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <sc-for list="{{ theses }}" as="t" hint-placeholder-count="5">
+            <div onClick="{{ t.open }}" style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;box-shadow:0 1px 2px rgba(16,24,40,.03);padding:22px;cursor:pointer;display:flex;flex-direction:column">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                <span style="display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;color:{{ t.facetColor }};background:{{ t.facetBg }}">{{ t.facetLabel }}</span>
+                <span style="font-size:11px;color:#9aa1af">信心度 <b class="num" style="color:{{ t.convColor }};font-weight:600">{{ t.convictionPct }}</b></span>
+              </div>
+              <div style="font:600 16px/1.45 'Noto Sans TC';margin-top:13px;color:#191c22">{{ t.title }}</div>
+              <div class="clamp3" style="font-size:13px;line-height:1.65;color:#69707d;margin-top:9px;flex:1">{{ t.summary }}</div>
+              <div style="width:100%;height:5px;border-radius:4px;background:#eef0f4;margin-top:16px;overflow:hidden"><div style="height:100%;border-radius:4px;background:{{ t.convColor }};width:{{ t.convictionPct }}"></div></div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:13px">
+                <span style="font-size:11.5px;color:#9aa1af">{{ t.researcher }} · {{ t.date }}</span>
+                <span style="font-size:12px;font-weight:500;color:{{ accent }}">完整報告 →</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- ============ TRADE DETAIL ============ -->
+      <sc-if value="{{ isTrade }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div onClick="{{ backPositions }}" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#8a91a0;cursor:pointer;margin-bottom:18px">← 返回交易部位</div>
+
+          <div style="background:#fff;border:1px solid #e8eaf0;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.03);padding:26px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px">
+            <div>
+              <div style="display:flex;align-items:center;gap:11px">
+                <span class="num" style="font-size:26px;font-weight:600;color:#191c22">{{ curTrade.symbol }}</span>
+                <span style="font-size:12px;font-weight:500;padding:3px 10px;border-radius:7px;color:{{ curTrade.dirColor }};background:{{ curTrade.dirBg }}">{{ curTrade.dirLabel }}</span>
+                <span style="font-size:12px;font-weight:500;padding:3px 10px;border-radius:7px;color:{{ curTrade.riskColor }};background:{{ curTrade.riskBg }}">{{ curTrade.riskLabel }}</span>
+              </div>
+              <div style="font-size:14px;color:#69707d;margin-top:8px">{{ curTrade.name }} · <span style="color:#9aa1af">{{ curTrade.statusLabel }}</span></div>
+            </div>
+            <div style="text-align:right">
+              <div class="num" style="font-size:30px;font-weight:600;color:{{ curTrade.pnlColor }}">{{ curTrade.pnlText }}</div>
+              <div class="num" style="font-size:14px;font-weight:500;color:{{ curTrade.pnlColor }};margin-top:2px">{{ curTrade.pnlPctText }} · 現價 {{ curTrade.currentText }}</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.72fr);gap:22px;margin-top:22px;align-items:start" class="twocol">
+            <div style="display:flex;flex-direction:column;gap:22px">
+              <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;padding:22px 24px;box-shadow:0 1px 2px rgba(16,24,40,.03)">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.09em;color:#aab0bd">NARRATIVE</div>
+                <div style="font:600 15px 'Noto Sans TC';margin-top:11px;color:#191c22">預期敘事</div>
+                <div style="font-size:13.5px;line-height:1.75;color:#5a626f;margin-top:9px">{{ curTrade.narrative }}</div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;padding:22px 24px;box-shadow:0 1px 2px rgba(16,24,40,.03)">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.09em;color:#aab0bd">CATALYSTS</div>
+                <div style="font:600 15px 'Noto Sans TC';margin:11px 0 16px;color:#191c22">催化劑時間點</div>
+                <div style="display:flex;flex-direction:column">
+                  <sc-for list="{{ curTrade.catalysts }}" as="c" hint-placeholder-count="3">
+                    <div style="display:flex;gap:15px;padding-bottom:16px;position:relative">
+                      <div style="width:58px;flex:none;text-align:right"><span class="num" style="font-size:13px;font-weight:600;color:{{ accent }}">{{ c.date }}</span></div>
+                      <div style="width:11px;flex:none;display:flex;flex-direction:column;align-items:center"><span style="width:9px;height:9px;border-radius:50%;background:#fff;border:2px solid {{ accent }};margin-top:3px"></span><span style="flex:1;width:2px;background:#eef0f4"></span></div>
+                      <div style="font-size:13px;line-height:1.5;color:#5a626f;padding-top:1px">{{ c.label }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;padding:22px 24px;box-shadow:0 1px 2px rgba(16,24,40,.03)">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.09em;color:#aab0bd">SUPPORTING RESEARCH</div>
+                <div style="font:600 15px 'Noto Sans TC';margin:11px 0 15px;color:#191c22">支撐這筆交易的研究</div>
+                <div style="display:flex;flex-direction:column;gap:11px">
+                  <sc-for list="{{ curTrade.linkedTheses }}" as="t" hint-placeholder-count="2">
+                    <div onClick="{{ t.open }}" style="border:1px solid #eceef3;border-radius:12px;padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:14px">
+                      <span style="display:inline-flex;align-items:center;font-size:10.5px;font-weight:500;padding:3px 9px;border-radius:20px;color:{{ t.facetColor }};background:{{ t.facetBg }};flex:none">{{ t.facetLabel }}</span>
+                      <div style="flex:1;min-width:0">
+                        <div style="font-size:13.5px;font-weight:500;color:#191c22;line-height:1.4">{{ t.title }}</div>
+                        <div style="font-size:11.5px;color:#9aa1af;margin-top:3px">{{ t.researcher }} · 信心度 {{ t.convictionPct }}</div>
+                      </div>
+                      <span style="color:{{ accent }};font-size:14px;flex:none">→</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="background:linear-gradient(180deg,#fbfbfd,#f7f8fb);border:1px solid #e8eaf0;border-radius:16px;padding:22px 24px">
+                <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
+                  <div style="width:30px;height:30px;border-radius:9px;background:#191c22;color:#fff;display:flex;align-items:center;justify-content:center;font:600 11px 'IBM Plex Mono',monospace">T</div>
+                  <div><div style="font-size:13px;font-weight:600;color:#191c22">交易員綜合判斷</div><div style="font-size:11px;color:#9aa1af">首席交易員 · 決策依據</div></div>
+                </div>
+                <div style="font-size:13.5px;line-height:1.8;color:#4a515e">{{ curTrade.rationale }}</div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:22px">
+              <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;padding:22px 24px;box-shadow:0 1px 2px rgba(16,24,40,.03)">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.09em;color:#aab0bd">POSITION</div>
+                <div style="font:600 15px 'Noto Sans TC';margin:11px 0 14px;color:#191c22">部位資訊</div>
+                <sc-for list="{{ curTrade.facts }}" as="f" hint-placeholder-count="5">
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-top:1px solid #f2f3f7">
+                    <span style="font-size:12.5px;color:#8a91a0">{{ f.label }}</span>
+                    <span class="num" style="font-size:13.5px;font-weight:600;color:#191c22">{{ f.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;padding:22px 24px;box-shadow:0 1px 2px rgba(16,24,40,.03)">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.09em;color:#aab0bd">RISK CONTROL</div>
+                <div style="font:600 15px 'Noto Sans TC';margin:11px 0 16px;color:#191c22">停利停損設定</div>
+
+                <div style="border:1px solid #d9ede4;background:#f2f9f5;border-radius:12px;padding:14px 16px">
+                  <div style="display:flex;align-items:center;justify-content:space-between">
+                    <span style="font-size:12px;color:#0f8a5f;font-weight:600">停利目標</span>
+                    <span class="num" style="font-size:16px;font-weight:600;color:#0f8a5f">{{ curTrade.tpText }}</span>
+                  </div>
+                  <div style="font-size:12px;line-height:1.6;color:#5a7267;margin-top:8px">{{ curTrade.tpReason }}</div>
+                </div>
+
+                <div style="border:1px solid #f0d9d5;background:#fcf3f1;border-radius:12px;padding:14px 16px;margin-top:12px">
+                  <div style="display:flex;align-items:center;justify-content:space-between">
+                    <span style="font-size:12px;color:#c0392b;font-weight:600">停損防線</span>
+                    <span class="num" style="font-size:16px;font-weight:600;color:#c0392b">{{ curTrade.slText }}</span>
+                  </div>
+                  <div style="font-size:12px;line-height:1.6;color:#8a5a52;margin-top:8px">{{ curTrade.slReason }}</div>
+                </div>
+
+                <div style="margin-top:18px">
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+                    <span style="font-size:12.5px;color:#8a91a0">交易員信心度</span>
+                    <span class="num" style="font-size:14px;font-weight:600;color:{{ curTrade.convColor }}">{{ curTrade.convictionPct }}</span>
+                  </div>
+                  <div style="width:100%;height:7px;border-radius:5px;background:#eef0f4;overflow:hidden"><div style="height:100%;border-radius:5px;background:{{ curTrade.convColor }};width:{{ curTrade.convictionPct }}"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ THESIS DETAIL ============ -->
+      <sc-if value="{{ isThesis }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div onClick="{{ backResearch }}" style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#8a91a0;cursor:pointer;margin-bottom:18px">← 返回研究報告</div>
+
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.68fr);gap:26px;align-items:start" class="twocol">
+            <div>
+              <span style="display:inline-flex;align-items:center;font-size:11.5px;font-weight:500;padding:4px 12px;border-radius:20px;color:{{ curThesis.facetColor }};background:{{ curThesis.facetBg }}">{{ curThesis.facetLabel }}</span>
+              <h1 style="font:700 27px/1.4 'Noto Sans TC';margin:16px 0 0;color:#191c22">{{ curThesis.title }}</h1>
+              <div style="font-size:13px;color:#8a91a0;margin-top:12px">{{ curThesis.researcher }} · {{ curThesis.date }}</div>
+
+              <div style="background:#f7f8fb;border:1px solid #eceef3;border-left:3px solid {{ curThesis.facetColor }};border-radius:12px;padding:18px 20px;margin-top:22px">
+                <div style="font-size:14.5px;line-height:1.85;color:#3f4653">{{ curThesis.summary }}</div>
+              </div>
+
+              <div style="margin-top:28px">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.09em;color:#aab0bd;margin-bottom:12px">KEY POINTS</div>
+                <sc-for list="{{ curThesis.points }}" as="pt" hint-placeholder-count="3">
+                  <div style="display:flex;gap:11px;padding:8px 0">
+                    <span style="width:18px;height:18px;border-radius:50%;background:{{ curThesis.facetBg }};color:{{ curThesis.facetColor }};display:flex;align-items:center;justify-content:center;font-size:11px;flex:none;margin-top:1px">✓</span>
+                    <span style="font-size:14px;line-height:1.6;color:#4a515e">{{ pt }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="margin-top:30px;display:flex;flex-direction:column;gap:24px">
+                <sc-for list="{{ curThesis.body }}" as="b" hint-placeholder-count="3">
+                  <div>
+                    <h3 style="font:700 16px 'Noto Sans TC';margin:0 0 10px;color:#191c22">{{ b.h }}</h3>
+                    <p style="font-size:14px;line-height:1.9;color:#4a515e;margin:0">{{ b.p }}</p>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:20px">
+              <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;padding:22px 24px;box-shadow:0 1px 2px rgba(16,24,40,.03)">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:9px">
+                  <span style="font-size:12.5px;color:#8a91a0">研究信心度</span>
+                  <span class="num" style="font-size:16px;font-weight:600;color:{{ curThesis.convColor }}">{{ curThesis.convictionPct }}</span>
+                </div>
+                <div style="width:100%;height:7px;border-radius:5px;background:#eef0f4;overflow:hidden"><div style="height:100%;border-radius:5px;background:{{ curThesis.convColor }};width:{{ curThesis.convictionPct }}"></div></div>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;padding:22px 24px;box-shadow:0 1px 2px rgba(16,24,40,.03)">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.09em;color:#aab0bd;margin-bottom:14px">KEY DATA</div>
+                <sc-for list="{{ curThesis.dataPoints }}" as="d" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid #f2f3f7">
+                    <span style="font-size:12.5px;color:#69707d">{{ d.label }}</span>
+                    <span class="num" style="font-size:15px;font-weight:600;color:#191c22">{{ d.value }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="background:#fff;border:1px solid #e8eaf0;border-radius:16px;padding:22px 24px;box-shadow:0 1px 2px rgba(16,24,40,.03)">
+                <div style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.09em;color:#aab0bd;margin-bottom:14px">RELATED TRADES</div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ curThesis.relatedTrades }}" as="r" hint-placeholder-count="2">
+                    <div onClick="{{ r.open }}" style="border:1px solid #eceef3;border-radius:11px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:10px">
+                      <div style="display:flex;align-items:center;gap:8px;min-width:0">
+                        <span class="num" style="font-size:13px;font-weight:600;color:#191c22">{{ r.symbol }}</span>
+                        <span style="font-size:10px;font-weight:500;padding:2px 6px;border-radius:5px;color:{{ r.dirColor }};background:{{ r.dirBg }}">{{ r.dirLabel }}</span>
+                      </div>
+                      <span class="num" style="font-size:13px;font-weight:600;color:{{ r.pnlColor }}">{{ r.pnlPctText }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ============ ASSIGN TASK ============ -->
+      <sc-if value="{{ isAssign }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.82fr);gap:26px;align-items:start" class="twocol">
+          <div style="background:#fff;border:1px solid #e8eaf0;border-radius:18px;box-shadow:0 1px 2px rgba(16,24,40,.03);padding:26px 28px">
+            <div style="font:700 17px 'Noto Sans TC';color:#191c22">下達新研究任務</div>
+            <div style="font-size:13px;color:#8a91a0;margin-top:5px">描述你感興趣的 topic，指派研究面向，團隊會依此展開研究並回報 thesis。</div>
+
+            <div style="margin-top:24px">
+              <label style="font-size:12.5px;font-weight:500;color:#4a515e">研究主題</label>
+              <textarea value="{{ topic }}" onInput="{{ setTopic }}" placeholder="例如：評估 AI 電力供應瓶頸對台系散熱與電源供應鏈的中期影響……" style="width:100%;margin-top:9px;min-height:92px;resize:vertical;border:1px solid #e2e4ec;border-radius:12px;padding:13px 15px;font:400 13.5px/1.6 'Noto Sans TC';color:#191c22;outline:none;background:#fbfbfd"></textarea>
+            </div>
+
+            <div style="margin-top:22px">
+              <label style="font-size:12.5px;font-weight:500;color:#4a515e">指派研究面向</label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:11px">
+                <sc-for list="{{ facetChips }}" as="c" hint-placeholder-count="4">
+                  <div onClick="{{ c.toggle }}" style="{{ c.style }}">
+                    <span style="width:9px;height:9px;border-radius:50%;background:{{ c.dot }}"></span>
+                    <div style="flex:1"><div style="font-size:13px;font-weight:500;color:#191c22">{{ c.label }}</div><div style="font-size:11px;color:#9aa1af;margin-top:1px">{{ c.desc }}</div></div>
+                    <span style="font-size:13px;color:{{ c.check }}">{{ c.mark }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="margin-top:22px">
+              <label style="font-size:12.5px;font-weight:500;color:#4a515e">優先度</label>
+              <div style="display:flex;gap:9px;margin-top:11px">
+                <sc-for list="{{ priorityOpts }}" as="o" hint-placeholder-count="3">
+                  <div onClick="{{ o.set }}" style="{{ o.style }}">{{ o.label }}</div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div onClick="{{ submitTask }}" style="{{ submitStyle }}">
+              <svg width="15" height="15" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 3L9 11M17 3l-5.5 14-3-6.5L2 7.5 17 3Z" stroke-linejoin="round" stroke-linecap="round"/></svg>
+              指派任務給團隊
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:15px">
+              <span style="font:600 10px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#aab0bd">QUEUE</span>
+              <h2 style="font:700 16px 'Noto Sans TC';margin:0;color:#191c22">任務佇列</h2>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ taskList }}" as="k" hint-placeholder-count="3">
+                <div style="background:#fff;border:1px solid #e8eaf0;border-radius:14px;box-shadow:0 1px 2px rgba(16,24,40,.03);padding:16px 18px">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+                    <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:{{ k.statusColor }}"><span style="width:6px;height:6px;border-radius:50%;background:{{ k.statusColor }}" class="{{ k.pulse }}"></span>{{ k.statusLabel }}</span>
+                    <span style="font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:6px;color:{{ k.prColor }};background:{{ k.prBg }}">{{ k.prLabel }}</span>
+                  </div>
+                  <div style="font-size:13.5px;line-height:1.55;color:#191c22;margin-top:11px;font-weight:500">{{ k.topic }}</div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin-top:13px">
+                    <div style="display:flex;gap:6px;flex-wrap:wrap">
+                      <sc-for list="{{ k.facetTags }}" as="f" hint-placeholder-count="2">
+                        <span style="font-size:10.5px;padding:2px 8px;border-radius:20px;color:{{ f.color }};background:{{ f.bg }}">{{ f.label }}</span>
+                      </sc-for>
+                    </div>
+                    <span style="font-size:11px;color:#a3a9b6">{{ k.when }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+
+    </div>
+  </main>
+
+  <nav class="mobnav" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:40;background:rgba(251,251,253,.95);backdrop-filter:blur(12px);border-top:1px solid #e8eaf0;padding:6px 6px 8px;align-items:stretch">
+    <div onClick="{{ nav.dashboard.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 0;cursor:pointer;color:{{ nav.dashboard.mcolor }}">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2.5" y="2.5" width="6" height="6" rx="1.5"/><rect x="11.5" y="2.5" width="6" height="6" rx="1.5"/><rect x="2.5" y="11.5" width="6" height="6" rx="1.5"/><rect x="11.5" y="11.5" width="6" height="6" rx="1.5"/></svg>
+      <span style="font-size:10px;font-weight:500">儀表板</span>
+    </div>
+    <div onClick="{{ nav.desk.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 0;cursor:pointer;color:{{ nav.desk.mcolor }};position:relative">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 2.5 3 6v4.5c0 4 3 6.4 7 7.5 4-1.1 7-3.5 7-7.5V6l-7-3.5Z" stroke-linejoin="round"/><path d="m7.3 10 1.9 2 3.8-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span style="font-size:10px;font-weight:500">決策</span>
+      <sc-if value="{{ hasProposals }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:1px;left:calc(50% + 7px);min-width:15px;height:15px;padding:0 4px;border-radius:8px;background:#c0392b;color:#fff;font:600 9px 'IBM Plex Mono',monospace;display:flex;align-items:center;justify-content:center">{{ deskPending }}</span></sc-if>
+    </div>
+    <div onClick="{{ nav.positions.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 0;cursor:pointer;color:{{ nav.positions.mcolor }}">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 16.5V9M8 16.5V4.5M13 16.5V11M18 16.5V6.5" stroke-linecap="round"/></svg>
+      <span style="font-size:10px;font-weight:500">部位</span>
+    </div>
+    <div onClick="{{ nav.research.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 0;cursor:pointer;color:{{ nav.research.mcolor }}">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="2.5" width="12" height="15" rx="2"/><path d="M7 6.5h6M7 10h6M7 13.5h3.5" stroke-linecap="round"/></svg>
+      <span style="font-size:10px;font-weight:500">研究</span>
+    </div>
+    <div onClick="{{ nav.assign.go }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:5px 0;cursor:pointer;color:{{ nav.assign.mcolor }}">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M17 3L9 11M17 3l-5.5 14-3-6.5L2 7.5 17 3Z" stroke-linejoin="round" stroke-linecap="round"/></svg>
+      <span style="font-size:10px;font-weight:500">派任務</span>
+    </div>
+  </nav>
+</div>
+
+<sc-if value="{{ modal.open }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ modal.close }}" style="position:fixed;inset:0;z-index:50;background:rgba(20,22,28,.42);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px">
+    <div onClick="{{ modal.stop }}" class="modalcard" style="width:440px;max-width:100%;background:#fff;border-radius:20px;box-shadow:0 24px 60px rgba(16,24,40,.28);padding:26px 28px">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div style="font:700 17px 'Noto Sans TC';color:#191c22">{{ modal.title }}</div>
+        <span onClick="{{ modal.close }}" style="width:28px;height:28px;border-radius:8px;background:#f2f3f7;color:#69707d;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px">✕</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:18px;padding:13px 15px;background:#fafbfc;border:1px solid #f0f1f5;border-radius:12px">
+        <span class="num" style="font-size:16px;font-weight:600;color:#191c22">{{ modal.symbol }}</span>
+        <span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:6px;color:{{ modal.dirColor }};background:{{ modal.dirBg }}">{{ modal.dirLabel }}</span>
+        <span style="font-size:12px;color:#8a91a0">{{ modal.name }}</span>
+      </div>
+
+      <sc-if value="{{ modal.isExecute }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="font-size:12px;color:#8a91a0;margin-top:16px">交易員建議進場 <b class="num" style="color:#191c22">{{ modal.propEntryText }}</b> · 停利 <b class="num" style="color:#0f8a5f">{{ modal.tpText }}</b> · 停損 <b class="num" style="color:#c0392b">{{ modal.slText }}</b></div>
+          <div style="margin-top:16px"><label style="font-size:12.5px;font-weight:500;color:#4a515e">實際成交價</label>
+            <input value="{{ modal.price }}" onInput="{{ modal.setPrice }}" style="width:100%;margin-top:8px;border:1px solid #e2e4ec;border-radius:11px;padding:11px 14px;font:500 14px 'IBM Plex Mono',monospace;color:#191c22;outline:none;background:#fbfbfd"></div>
+          <div style="margin-top:14px"><label style="font-size:12.5px;font-weight:500;color:#4a515e">成交部位</label>
+            <input value="{{ modal.size }}" onInput="{{ modal.setSize }}" style="width:100%;margin-top:8px;border:1px solid #e2e4ec;border-radius:11px;padding:11px 14px;font:400 13.5px 'Noto Sans TC';color:#191c22;outline:none;background:#fbfbfd"></div>
+          <div style="margin-top:14px"><label style="font-size:12.5px;font-weight:500;color:#4a515e">執行備註（選填）</label>
+            <input value="{{ modal.note }}" onInput="{{ modal.setNote }}" placeholder="例如：分兩批建倉、實際滑價……" style="width:100%;margin-top:8px;border:1px solid #e2e4ec;border-radius:11px;padding:11px 14px;font:400 13px 'Noto Sans TC';color:#191c22;outline:none;background:#fbfbfd"></div>
+          <div style="display:flex;gap:10px;margin-top:22px">
+            <div onClick="{{ modal.close }}" style="flex:none;padding:12px 20px;border-radius:11px;font-size:13.5px;font-weight:500;cursor:pointer;color:#69707d;background:#fff;border:1.5px solid #e8eaf0">取消</div>
+            <div onClick="{{ modal.confirmExecute }}" style="flex:1;text-align:center;padding:12px;border-radius:11px;font-size:13.5px;font-weight:600;cursor:pointer;color:#fff;background:{{ accent }}">確認執行並加入部位</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ modal.isReject }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="margin-top:16px"><label style="font-size:12.5px;font-weight:500;color:#4a515e">否決原因（回饋給交易員）</label>
+            <textarea value="{{ modal.note }}" onInput="{{ modal.setNote }}" placeholder="例如：風險過高、與現有部位重疊、時點未到……" style="width:100%;margin-top:8px;min-height:88px;resize:vertical;border:1px solid #e2e4ec;border-radius:11px;padding:11px 14px;font:400 13.5px/1.6 'Noto Sans TC';color:#191c22;outline:none;background:#fbfbfd"></textarea></div>
+          <div style="display:flex;gap:10px;margin-top:20px">
+            <div onClick="{{ modal.close }}" style="flex:none;padding:12px 20px;border-radius:11px;font-size:13.5px;font-weight:500;cursor:pointer;color:#69707d;background:#fff;border:1.5px solid #e8eaf0">取消</div>
+            <div onClick="{{ modal.confirmReject }}" style="flex:1;text-align:center;padding:12px;border-radius:11px;font-size:13.5px;font-weight:600;cursor:pointer;color:#fff;background:#c0392b">確認否決</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ modal.isReport }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="margin-top:16px"><label style="font-size:12.5px;font-weight:500;color:#4a515e">目前市價</label>
+            <input value="{{ modal.price }}" onInput="{{ modal.setPrice }}" style="width:100%;margin-top:8px;border:1px solid #e2e4ec;border-radius:11px;padding:11px 14px;font:500 14px 'IBM Plex Mono',monospace;color:#191c22;outline:none;background:#fbfbfd"></div>
+          <div style="margin-top:16px"><label style="font-size:12.5px;font-weight:500;color:#4a515e">部位狀態</label>
+            <div style="display:flex;gap:9px;margin-top:9px">
+              <sc-for list="{{ modal.statusOpts }}" as="o" hint-placeholder-count="3"><div onClick="{{ o.set }}" style="{{ o.style }}">{{ o.label }}</div></sc-for>
+            </div></div>
+          <div style="margin-top:14px"><label style="font-size:12.5px;font-weight:500;color:#4a515e">備註（選填）</label>
+            <input value="{{ modal.note }}" onInput="{{ modal.setNote }}" placeholder="回報給交易員的執行狀況……" style="width:100%;margin-top:8px;border:1px solid #e2e4ec;border-radius:11px;padding:11px 14px;font:400 13px 'Noto Sans TC';color:#191c22;outline:none;background:#fbfbfd"></div>
+          <div style="display:flex;gap:10px;margin-top:22px">
+            <div onClick="{{ modal.close }}" style="flex:none;padding:12px 20px;border-radius:11px;font-size:13.5px;font-weight:500;cursor:pointer;color:#69707d;background:#fff;border:1.5px solid #e8eaf0">取消</div>
+            <div onClick="{{ modal.confirmReport }}" style="flex:1;text-align:center;padding:12px;border-radius:11px;font-size:13.5px;font-weight:600;cursor:pointer;color:#fff;background:{{ accent }}">更新部位</div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+</sc-if></x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#375dfb&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;外觀&quot;},&quot;defaultView&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dashboard&quot;,&quot;positions&quot;,&quot;research&quot;,&quot;assign&quot;],&quot;default&quot;:&quot;dashboard&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;外觀&quot;}}">
+class Component extends DCLogic {
+  state = {
+    view: this.props.defaultView || 'dashboard',
+    tradeId: 'tr1',
+    thesisId: 'th1',
+    topic: '',
+    facets: [],
+    priority: 'normal',
+    tasks: [
+      { id:'k1', topic:'評估輝達 GB300 出貨對台系供應鏈的營收貢獻與時程', facets:['industry','technical'], priority:'high', status:'progress', when:'昨天 14:30' },
+      { id:'k2', topic:'美國期中選舉前的市場避險部位配置建議', facets:['macro','sentiment'], priority:'normal', status:'pending', when:'今天 09:12' },
+      { id:'k3', topic:'分析比特幣現貨 ETF 資金流與科技股的連動性', facets:['sentiment'], priority:'normal', status:'done', when:'7/3' },
+    ],
+  };
+
+  constructor(props){
+    super(props);
+    this.state = {
+      ...this.state,
+      trades: this.tradeSeed.map(t=>({ ...t, status: t.status || 'holding' })),
+      proposals: this.proposalSeed.map(p=>({ ...p })),
+      decisions: [ { id:'d0', symbol:'NVDA · 做多', action:'rejected', when:'7/1', note:'估值已反映樂觀預期，建議等待回檔至季線再議' } ],
+      modal: null,
+      form: { price:'', size:'', note:'', status:'holding' },
+    };
+  }
+
+  team = [
+    { id:'t0', tag:'TR', role:'首席交易員', name:'交易員', status:'deciding', focus:'綜合四項研究，評估是否加碼黃金與台積電部位' },
+    { id:'t1', tag:'IN', role:'產業研究員', name:'產業面', status:'research', focus:'AI 資料中心電力瓶頸與半導體供應鏈重估' },
+    { id:'t2', tag:'MA', role:'總體經濟研究員', name:'總經', status:'done', focus:'聯準會 9 月降息路徑與美元走弱效應' },
+    { id:'t3', tag:'FL', role:'市場熱度研究員', name:'市場熱度', status:'research', focus:'避險資金流入黃金與日圓的籌碼變化' },
+    { id:'t4', tag:'QT', role:'技術指標研究員', name:'技術面', status:'idle', focus:'監控台積電 ADR 突破季線後的量價結構' },
+  ];
+
+  theses = [
+    { id:'th1', facet:'industry', title:'AI 資料中心電力瓶頸將重塑半導體與電力供應鏈', researcher:'產業研究員', date:'2026-07-02', conviction:82,
+      summary:'生成式 AI 推升資料中心用電需求，電力供應正取代晶片成為算力擴張的新瓶頸。具先進封裝（CoWoS）與高能效製程的晶圓代工，以及美國電力公用事業，將是這輪敘事的核心受惠者。',
+      points:['全球資料中心用電量 2026–2028 複合成長率預估超過 20%','CoWoS 產能仍是 AI 加速器出貨最大瓶頸，台積電擴產進度領先','美國電網老化，公用事業資本支出進入上行循環'],
+      body:[{h:'產業脈絡',p:'AI 訓練與推論的算力需求呈指數成長，帶動高階 GPU 與 ASIC 出貨。上游先進製程與先進封裝供不應求，中游伺服器 ODM 滿載，下游雲端業者資本支出連續上修，整條供應鏈進入景氣擴張。'},{h:'新的瓶頸：電力',p:'算力擴張的限制已從「晶片供給」轉向「電力供給」。單一 AI 資料中心用電可達數百 MW，美國多州電網面臨併網排隊，使電力公用事業成為這輪 AI 敘事被低估的隱性受惠者。'},{h:'估值與題材',p:'半導體龍頭本益比已反映部分成長預期，但電力供應鏈仍處於重評價早期。後續催化來自財報資本支出指引，以及大型電力採購協議（PPA）的簽署。'}],
+      dataPoints:[{label:'資料中心用電 CAGR',value:'+21%'},{label:'CoWoS 產能年增',value:'+80%'},{label:'美國公用事業 capex',value:'$1.7T'}],
+      tradeIds:['tr1','tr4'] },
+    { id:'th2', facet:'macro', title:'聯準會 9 月啟動降息，美元走弱利多非美資產與黃金', researcher:'總體經濟研究員', date:'2026-06-28', conviction:75,
+      summary:'通膨降溫、就業市場轉弱，市場已定價聯準會 9 月首次降息。美元指數見頂回落，資金外溢至黃金、新興市場與非美股匯，形成明確的降息交易主軸。',
+      points:['核心 PCE 連續三個月低於 3%','失業率升至 4.3%，勞動市場明顯鬆動','利率期貨定價年內 2 碼降息'],
+      body:[{h:'總體現況',p:'美國經濟軟著陸情境逐步成形，通膨向 2% 目標收斂，成長放緩但尚未陷入衰退，為降息創造空間。'},{h:'政策路徑',p:'聯準會近期釋出鴿派訊號，9 月降息機率升至七成。實質利率下行壓抑美元，並降低持有無息資產（黃金）的機會成本。'},{h:'國際與政治',p:'美國期中選舉逼近帶來財政與政策不確定性，避險需求與降息預期交織，共同利多黃金與日圓等避險資產。'}],
+      dataPoints:[{label:'核心 PCE',value:'2.8%'},{label:'9 月降息機率',value:'71%'},{label:'美元指數（季）',value:'-3.1%'}],
+      tradeIds:['tr2','tr3'] },
+    { id:'th3', facet:'sentiment', title:'避險情緒升溫，資金加速流入黃金與日圓', researcher:'市場熱度研究員', date:'2026-07-01', conviction:68,
+      summary:'地緣風險與選舉不確定性推升避險需求。黃金 ETF 連續四週淨流入，日圓投機空單快速回補，資金輪動跡象明確，市場情緒由貪婪轉向中性偏保守。',
+      points:['黃金 ETF 近四週淨流入約 58 億美元','CFTC 日圓投機空單降至一年低點','VIX 自低檔回升，避險情緒轉強'],
+      body:[{h:'市場情緒',p:'風險情緒由貪婪轉向中性偏保守，避險資產重新獲得資金青睞，科技股出現獲利了結賣壓。'},{h:'資金流向',p:'黃金與日圓為本波主要避險去化標的，ETF 與期貨部位同步顯示資金正加速輪動至防禦性資產。'},{h:'籌碼熱度',p:'投機部位顯示日圓空單過度擁擠，一旦利差敘事轉向，回補動能將放大日圓升值幅度。'}],
+      dataPoints:[{label:'黃金 ETF 週流入',value:'+$5.8B'},{label:'VIX',value:'17.4'},{label:'日圓投機空單',value:'一年低'}],
+      tradeIds:['tr2','tr3'] },
+    { id:'th4', facet:'technical', title:'台積電 ADR 站上季線，量價結構轉多', researcher:'技術指標研究員', date:'2026-07-03', conviction:71,
+      summary:'TSM 放量突破季線與前波高點，MACD 翻紅，均線呈多頭排列。回測不破 195 支撐則上看 245 前高，技術面與產業敘事形成共振。',
+      points:['突破當日成交量放大約 1.8 倍','20 日與 60 日均線黃金交叉','RSI 62，動能轉強但未過熱'],
+      body:[{h:'型態結構',p:'股價完成底部盤整後帶量突破頸線，突破型態確立，上檔空間打開。'},{h:'量能與指標',p:'MACD 柱狀體翻紅並持續擴大，量價齊揚，顯示多方掌握主動權。'},{h:'關鍵價位',p:'支撐位於 195、198；上方壓力在 225、245。停損建議設於 182，若跌破季線則型態轉弱。'}],
+      dataPoints:[{label:'突破量能',value:'1.8x'},{label:'RSI',value:'62'},{label:'季線',value:'$196'}],
+      tradeIds:['tr1'] },
+    { id:'th5', facet:'macro', title:'日本央行政策正常化，日圓中期具升值空間', researcher:'總體經濟研究員', date:'2026-06-25', conviction:64,
+      summary:'BOJ 逐步退出超寬鬆政策，升息與縮表預期升溫。在聯準會降息的另一端，美日利差開始收斂，套利交易平倉將支撐日圓中期升值。',
+      points:['BOJ 暗示年內仍有再升息空間','日本核心通膨穩定於 2% 上方','美日利差開始雙向收斂'],
+      body:[{h:'政策轉向',p:'日本央行結束負利率後持續正常化，貨幣政策由極度寬鬆轉向中性，方向與聯準會相反。'},{h:'利差邏輯',p:'Fed 降息搭配 BOJ 升息，美日利差雙向收斂，長期擁擠的日圓套利交易面臨平倉壓力，推升日圓。'},{h:'風險提醒',p:'若 BOJ 升息不如預期，或美國經濟意外過熱推遲降息，日圓的升值路徑將明顯延後。'}],
+      dataPoints:[{label:'美日利差',value:'收斂中'},{label:'日本核心 CPI',value:'2.4%'},{label:'USD/JPY',value:'154.6'}],
+      tradeIds:['tr3'] },
+  ];
+
+  tradeSeed = [
+    { id:'tr1', symbol:'TSM', name:'台積電 ADR', dir:'long', unit:'$', entry:198.40, current:211.20, tp:245, sl:182, risk:'mid', conviction:78,
+      sizeText:'800 股', costText:'$158,720', marketText:'$168,960', pnlUsd:10240, pnlPct:6.45,
+      narrative:'AI 資料中心資本支出循環：算力需求推升先進製程與 CoWoS 封裝需求，台積電為最直接、確定性最高的受惠者。',
+      tpReason:'達 AI 資本支出循環目標價區間，且逼近 245 前高壓力，分批獲利了結。',
+      slReason:'跌破季線 196 與 182 前低，量價轉弱代表突破失敗，立即出場。',
+      catalysts:[{date:'7/18',label:'Q2 財報與全年資本支出指引'},{date:'8 月',label:'CoWoS 擴產進度與良率更新'},{date:'Q3',label:'3nm/2nm 產能利用率驗證'}],
+      thesisIds:['th1','th4'],
+      rationale:'產業面確認 AI 資本支出循環仍在早期，技術面同步站上季線且量價轉多，兩條研究線同向共振。以中等部位參與主升段，嚴設 182 停損控制單一標的回檔風險。' },
+    { id:'tr2', symbol:'XAU', name:'黃金（現貨）', dir:'long', unit:'$', entry:2340, current:2412, tp:2600, sl:2250, risk:'low', conviction:72,
+      sizeText:'60 oz', costText:'$140,400', marketText:'$144,720', pnlUsd:4320, pnlPct:3.08,
+      narrative:'降息週期與避險資金流入的雙重支撐：實質利率下行降低持有成本，地緣與選舉不確定性推升避險配置。',
+      tpReason:'降息與避險雙引擎推升至 2600 心理關卡附近，減碼鎖定核心利潤。',
+      slReason:'跌破 2250 前低則避險敘事失效，且可能反映風險偏好反轉。',
+      catalysts:[{date:'7/31',label:'FOMC 利率決議與點陣圖'},{date:'8 月',label:'各國央行購金數據'},{date:'11 月',label:'美國期中選舉'}],
+      thesisIds:['th2','th3'],
+      rationale:'總經降息與市場避險兩條 thesis 同向支撐黃金，屬低風險核心配置。逢回加碼、長線持有，作為投資組合的下檔保護。' },
+    { id:'tr3', symbol:'USD/JPY', name:'做空美元兌日圓', dir:'short', unit:'', entry:158.20, current:154.60, tp:146, sl:162, risk:'high', conviction:65,
+      sizeText:'$150,000 名目', costText:'$150,000', marketText:'$153,417', pnlUsd:3417, pnlPct:2.28,
+      narrative:'BOJ 政策正常化搭配 Fed 降息，美日利差雙向收斂，長期擁擠的日圓套利交易平倉將推升日圓。',
+      tpReason:'美日利差收斂目標達成，146 為前波平台支撐，分批回補。',
+      slReason:'突破 162 代表套利交易未平倉、趨勢尚未反轉，停損出場。',
+      catalysts:[{date:'7/31',label:'BOJ 利率決議'},{date:'9 月',label:'FOMC 降息落地'},{date:'持續',label:'套利部位平倉動能'}],
+      thesisIds:['th5','th3'],
+      rationale:'高風險匯率交易，總經利差邏輯明確但轉折時點不確定。以小部位參與，嚴設 162 停損，等待催化劑逐步兌現。' },
+    { id:'tr4', symbol:'XLU', name:'美國公用事業 ETF', dir:'long', unit:'$', entry:72.10, current:74.85, tp:84, sl:68, risk:'low', conviction:70,
+      sizeText:'1,200 股', costText:'$86,520', marketText:'$89,820', pnlUsd:3300, pnlPct:3.81,
+      narrative:'AI 資料中心用電需求推升公用事業資本支出循環，是 AI 電力敘事被低估的第二層受惠者。',
+      tpReason:'電力 capex 循環反映至估值，84 為目標區，達標後檢視題材延續性。',
+      slReason:'跌破 68 代表電力題材推進不如預期，或利率反彈壓抑防禦股。',
+      catalysts:[{date:'7 月',label:'各州電網 capex 計畫公布'},{date:'Q3',label:'大型資料中心 PPA 簽署'}],
+      thesisIds:['th1'],
+      rationale:'產業面 AI 電力 thesis 的第二層受惠者，與 TSM 形成主題配對，在同一敘事下分散單一標的與波動風險。' },
+  ];
+
+  proposalSeed = [
+    { id:'p1', symbol:'SMH', name:'半導體 ETF', dir:'long', unit:'$', entry:245.50, tp:290, sl:225, risk:'mid', conviction:74,
+      sizeUsd:120000, sizeText:'約 $120,000',
+      narrative:'AI 資本支出循環外溢至整體半導體族群，以 ETF 分散個股風險參與板塊 beta。',
+      tpReason:'板塊評價修復至 290 目標區，分批獲利了結。', slReason:'跌破 225 代表 AI 資本支出敘事鬆動，出場。',
+      catalysts:[{date:'7/18',label:'費半權值股財報'},{date:'Q3',label:'雲端業者 capex 指引'}],
+      thesisIds:['th1','th4'], time:'今天 09:40',
+      rationale:'產業與技術面同向，但個股波動大。建議以半導體 ETF 建立底倉，若你同意可先建 1/2 部位、突破後再加碼。' },
+    { id:'p2', symbol:'EWZ', name:'巴西股市 ETF', dir:'long', unit:'$', entry:32.10, tp:38, sl:29.5, risk:'high', conviction:66,
+      sizeUsd:80000, sizeText:'約 $80,000',
+      narrative:'美元走弱與降息利多新興市場，巴西高股息與商品曝險同步受惠。',
+      tpReason:'美元弱勢與資金回流推升至 38 前高。', slReason:'跌破 29.5 代表新興市場資金再度流出。',
+      catalysts:[{date:'7/31',label:'FOMC 決議'},{date:'8 月',label:'巴西央行利率會議'}],
+      thesisIds:['th2'], time:'今天 08:15',
+      rationale:'總經降息 thesis 的新興市場延伸，屬高風險衛星部位。建議小額試單，控制在總資產 3% 以內。' },
+    { id:'p3', symbol:'TLT', name:'20 年期美債 ETF', dir:'long', unit:'$', entry:94.20, tp:104, sl:89, risk:'low', conviction:70,
+      sizeUsd:100000, sizeText:'約 $100,000',
+      narrative:'降息週期下長天期公債價格看升，同時兼具股市回檔時的避險功能。',
+      tpReason:'降息落地推升債券價格至 104。', slReason:'跌破 89 代表通膨或供給疑慮壓過降息利多。',
+      catalysts:[{date:'7/31',label:'FOMC 與點陣圖'},{date:'8 月',label:'美國財政部發債規模'}],
+      thesisIds:['th2'], time:'昨天 16:20',
+      rationale:'與黃金形成雙避險配置，存續期長、對降息高度敏感。建議作為核心防禦部位持有。' },
+  ];
+
+  F = {
+    industry:{ label:'產業面', color:'#4f46e5', bg:'#eef0fe', desc:'產業脈絡、供應鏈、估值' },
+    macro:{ label:'總體經濟', color:'#0d9488', bg:'#e2f3f0', desc:'總經、國際政經局勢' },
+    sentiment:{ label:'市場熱度', color:'#c2680a', bg:'#fbf0e0', desc:'市場情緒、資金流向' },
+    technical:{ label:'技術指標', color:'#2563eb', bg:'#e7f0ff', desc:'量化數據、技術分析' },
+  };
+  S = {
+    research:{ label:'研究中', color:'#2563eb', live:true },
+    done:{ label:'已完成', color:'#0f8a5f', live:false },
+    idle:{ label:'待命', color:'#9aa1af', live:false },
+    deciding:{ label:'決策中', color:'#c2680a', live:true },
+    pending:{ label:'待處理', color:'#9aa1af', live:false },
+    progress:{ label:'進行中', color:'#2563eb', live:true },
+  };
+  R = {
+    low:{ label:'低風險', color:'#0f8a5f', bg:'#e6f4ee' },
+    mid:{ label:'中風險', color:'#b8720a', bg:'#faf0dc' },
+    high:{ label:'高風險', color:'#c0392b', bg:'#fbeae7' },
+  };
+  D = {
+    long:{ label:'做多', color:'#0f8a5f', bg:'#e6f4ee' },
+    short:{ label:'做空', color:'#c0392b', bg:'#fbeae7' },
+  };
+  PR = {
+    high:{ label:'高優先', color:'#c0392b', bg:'#fbeae7' },
+    normal:{ label:'一般', color:'#5a626f', bg:'#eef0f4' },
+    low:{ label:'低優先', color:'#0d9488', bg:'#e2f3f0' },
+  };
+  AV = {
+    t0:{ bg:'#191c22', color:'#fff' }, t1:{ bg:'#eef0fe', color:'#4f46e5' },
+    t2:{ bg:'#e2f3f0', color:'#0d9488' }, t3:{ bg:'#fbf0e0', color:'#c2680a' }, t4:{ bg:'#e7f0ff', color:'#2563eb' },
+  };
+
+  money(n){ return '$' + Math.round(n).toLocaleString('en-US'); }
+  signed(n){ return (n>=0?'+':'−') + '$' + Math.abs(Math.round(n)).toLocaleString('en-US'); }
+  pctS(n){ return (n>=0?'+':'−') + Math.abs(n).toFixed(2) + '%'; }
+  price(u,n){ return u + n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  convColor(c){ return c>=75 ? '#0f8a5f' : c>=65 ? '#b8720a' : '#8a91a0'; }
+
+  navStyle(active){
+    const base = 'display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;font-size:13.5px;font-weight:500;cursor:pointer;transition:background .12s;';
+    const ac = this.props.accent || '#375dfb';
+    return active ? base + `background:#eef2ff;color:${ac}` : base + 'background:transparent;color:#69707d';
+  }
+
+  go(v){ return () => this.setState({ view:v }); }
+  openTrade(id){ this.setState({ view:'trade', tradeId:id }); }
+  openThesis(id){ this.setState({ view:'thesis', thesisId:id }); }
+  toggleFacet(k){ this.setState(s => ({ facets: s.facets.includes(k) ? s.facets.filter(x=>x!==k) : [...s.facets,k] })); }
+
+  setForm(k,v){ this.setState(s=>({ form:{ ...s.form, [k]:v } })); }
+  openExecute(id){ const p=this.state.proposals.find(x=>x.id===id); this.setState({ modal:{ type:'execute', id }, form:{ price:String(p.entry), size:p.sizeText, note:'', status:'holding' } }); }
+  openReject(id){ this.setState({ modal:{ type:'reject', id }, form:{ price:'', size:'', note:'', status:'holding' } }); }
+  openReport(id){ const t=this.state.trades.find(x=>x.id===id); this.setState({ modal:{ type:'report', id }, form:{ price:String(t.current), size:t.sizeText, note:'', status:t.status||'holding' } }); }
+  closeModal(){ this.setState({ modal:null }); }
+  confirmExecute(){
+    const m=this.state.modal, p=this.state.proposals.find(x=>x.id===m.id);
+    const fill=parseFloat(this.state.form.price)||p.entry;
+    const nt={ id:'tr'+Date.now(), symbol:p.symbol, name:p.name, dir:p.dir, unit:p.unit, entry:fill, current:fill,
+      tp:p.tp, sl:p.sl, risk:p.risk, conviction:p.conviction, status:'holding',
+      sizeText:this.state.form.size||p.sizeText, costText:this.money(p.sizeUsd), marketText:this.money(p.sizeUsd), pnlUsd:0, pnlPct:0,
+      narrative:p.narrative, tpReason:p.tpReason, slReason:p.slReason, catalysts:p.catalysts, thesisIds:p.thesisIds,
+      rationale:p.rationale + (this.state.form.note ? ('　執行備註：'+this.state.form.note) : '') };
+    const dec={ id:'d'+Date.now(), symbol:p.symbol+' · '+this.D[p.dir].label, action:'executed', when:'剛剛', note:'成交價 '+this.price(p.unit,fill)+'　'+(this.state.form.size||p.sizeText) };
+    this.setState(s=>({ trades:[...s.trades, nt], proposals:s.proposals.filter(x=>x.id!==m.id), decisions:[dec, ...s.decisions], modal:null }));
+  }
+  confirmReject(){
+    const m=this.state.modal, p=this.state.proposals.find(x=>x.id===m.id);
+    const dec={ id:'d'+Date.now(), symbol:p.symbol+' · '+this.D[p.dir].label, action:'rejected', when:'剛剛', note:this.state.form.note||'未提供原因' };
+    this.setState(s=>({ proposals:s.proposals.filter(x=>x.id!==m.id), decisions:[dec, ...s.decisions], modal:null }));
+  }
+  confirmReport(){
+    const m=this.state.modal, price=parseFloat(this.state.form.price), st=this.state.form.status;
+    this.setState(s=>({ modal:null, trades:s.trades.map(t=>{
+      if(t.id!==m.id) return t;
+      const cur=isNaN(price)?t.current:price;
+      const pnlPct = t.dir==='short' ? (t.entry-cur)/t.entry*100 : (cur-t.entry)/t.entry*100;
+      const cost = parseFloat(String(t.costText).replace(/[^0-9.]/g,''))||0;
+      return { ...t, current:cur, status:st, pnlPct:Math.round(pnlPct*100)/100, pnlUsd:Math.round(pnlPct/100*cost) };
+    }) }));
+  }
+
+  submitTask(){
+    const t = this.state.topic.trim();
+    if(!t) return;
+    const facets = this.state.facets.length ? this.state.facets : ['industry'];
+    const nk = { id:'k'+Date.now(), topic:t, facets, priority:this.state.priority, status:'pending', when:'剛剛' };
+    this.setState(s => ({ tasks:[nk, ...s.tasks], topic:'', facets:[], priority:'normal' }));
+  }
+
+  thesisVM(t){
+    const f = this.F[t.facet];
+    return { id:t.id, title:t.title, summary:t.summary, researcher:t.researcher, date:t.date,
+      facetLabel:f.label, facetColor:f.color, facetBg:f.bg,
+      conviction:t.conviction, convictionPct:t.conviction+'%', convColor:this.convColor(t.conviction),
+      open:()=>this.openThesis(t.id) };
+  }
+  tradeVM(p){
+    const d = this.D[p.dir], r = this.R[p.risk];
+    return { id:p.id, symbol:p.symbol, name:p.name, narrative:p.narrative,
+      dirLabel:d.label, dirColor:d.color, dirBg:d.bg,
+      riskLabel:r.label, riskColor:r.color, riskBg:r.bg,
+      entryText:this.price(p.unit,p.entry), currentText:this.price(p.unit,p.current),
+      tpText:this.price(p.unit,p.tp), slText:this.price(p.unit,p.sl),
+      pnlText:this.signed(p.pnlUsd), pnlPctText:this.pctS(p.pnlPct), pnlColor:p.pnlUsd>=0?'#0f8a5f':'#c0392b',
+      convictionPct:p.conviction+'%', convColor:this.convColor(p.conviction),
+      statusLabel:(p.status==='closed'?'已平倉':p.status==='trim'?'部分了結':'持有中'),
+      statusColor:(p.status==='closed'?'#9aa1af':'#0f8a5f'),
+      report:(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); this.openReport(p.id); },
+      open:()=>this.openTrade(p.id) };
+  }
+
+  renderVals(){
+    const s = this.state, ac = this.props.accent || '#375dfb';
+    const totalPnl = this.state.trades.reduce((a,t)=>a+t.pnlUsd,0);
+
+    const nav = {};
+    [['dashboard',['dashboard']],['desk',['desk']],['positions',['positions','trade']],['research',['research','thesis']],['assign',['assign']]]
+      .forEach(([k,views]) => { const on=views.includes(s.view); nav[k] = { style:this.navStyle(on), go:this.go(k), mcolor:on?ac:'#9aa1af' }; });
+
+    const titles = {
+      dashboard:['綜合儀表板','全球宏觀 · 多市場 · 你的 AI 投資工作室即時概況'],
+      desk:['決策台','交易員的策略提案，等待你核准執行或否決 — 你保有最終裁量權'],
+      positions:['交易部位','交易員目前持有的部位與風控設定'],
+      research:['研究報告','四大研究面向的完整 thesis 資料庫'],
+      trade:['交易決策詳情','進出場、停利停損、預期敘事與支撐研究'],
+      thesis:['研究報告詳情','研究員完整 thesis 與相關交易'],
+      assign:['派研究任務','下達指令，指派研究面向給團隊'],
+    };
+
+    const curT = this.state.trades.find(t=>t.id===s.tradeId) || this.state.trades[0];
+    const curTh = this.theses.find(t=>t.id===s.thesisId) || this.theses[0];
+
+    const curTrade = (()=>{
+      const vm = this.tradeVM(curT);
+      return { ...vm, narrative:curT.narrative, tpReason:curT.tpReason, slReason:curT.slReason, rationale:curT.rationale,
+        catalysts:curT.catalysts,
+        facts:[
+          {label:'方向',value:this.D[curT.dir].label},
+          {label:'進場價',value:this.price(curT.unit,curT.entry)},
+          {label:'現價',value:this.price(curT.unit,curT.current)},
+          {label:'部位大小',value:curT.sizeText},
+          {label:'部位成本',value:curT.costText},
+          {label:'目前市值',value:curT.marketText},
+        ],
+        linkedTheses: curT.thesisIds.map(id=>{ const th=this.theses.find(x=>x.id===id); return this.thesisVM(th); }) };
+    })();
+
+    const curThesis = (()=>{
+      const f=this.F[curTh.facet];
+      return { title:curTh.title, summary:curTh.summary, researcher:curTh.researcher, date:curTh.date,
+        facetLabel:f.label, facetColor:f.color, facetBg:f.bg,
+        convictionPct:curTh.conviction+'%', convColor:this.convColor(curTh.conviction),
+        points:curTh.points, body:curTh.body, dataPoints:curTh.dataPoints,
+        relatedTrades: curTh.tradeIds.map(id=>{ const p=this.state.trades.find(x=>x.id===id); return this.tradeVM(p); }) };
+    })();
+
+    const facetChips = ['industry','macro','sentiment','technical'].map(k=>{
+      const f=this.F[k], on=s.facets.includes(k);
+      return { label:f.label, desc:f.desc, dot:f.color,
+        toggle:()=>this.toggleFacet(k), mark:on?'✓':'', check:on?ac:'transparent',
+        style:'display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:12px;cursor:pointer;border:1.5px solid '+(on?ac:'#e8eaf0')+';background:'+(on?'#f7f9ff':'#fbfbfd') };
+    });
+
+    const priorityOpts = [['high','高'],['normal','一般'],['low','低']].map(([k,l])=>{
+      const on=s.priority===k;
+      return { label:l, set:()=>this.setState({priority:k}),
+        style:'flex:1;text-align:center;padding:10px 0;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid '+(on?ac:'#e8eaf0')+';color:'+(on?ac:'#69707d')+';background:'+(on?'#f7f9ff':'#fff') };
+    });
+
+    const canSubmit = s.topic.trim().length>0;
+    const submitStyle = 'display:flex;align-items:center;justify-content:center;gap:9px;width:100%;margin-top:26px;padding:14px;border-radius:12px;font-size:14px;font-weight:600;cursor:'+(canSubmit?'pointer':'not-allowed')+';color:#fff;background:'+(canSubmit?ac:'#c2c7d2')+';box-shadow:0 1px 2px rgba(16,24,40,.12)';
+
+    const taskList = s.tasks.map(k=>{
+      const st=this.S[k.status], pr=this.PR[k.priority];
+      return { topic:k.topic, when:k.when, statusLabel:st.label, statusColor:st.color, pulse:st.live?'live':'',
+        prLabel:pr.label, prColor:pr.color, prBg:pr.bg,
+        facetTags:k.facets.map(fk=>({ label:this.F[fk].label, color:this.F[fk].color, bg:this.F[fk].bg })) };
+    });
+
+    const deskPending = s.proposals.length;
+    const proposalsVM = s.proposals.map(p=>{
+      const d=this.D[p.dir], r=this.R[p.risk];
+      return { id:p.id, symbol:p.symbol, name:p.name, time:p.time, narrative:p.narrative, rationale:p.rationale,
+        dirLabel:d.label, dirColor:d.color, dirBg:d.bg, riskLabel:r.label, riskColor:r.color, riskBg:r.bg,
+        entryText:this.price(p.unit,p.entry), tpText:this.price(p.unit,p.tp), slText:this.price(p.unit,p.sl),
+        sizeText:p.sizeText, convictionPct:p.conviction+'%', convColor:this.convColor(p.conviction),
+        chips:p.thesisIds.map(id=>{ const th=this.theses.find(x=>x.id===id), f=this.F[th.facet]; return { label:f.label, color:f.color, bg:f.bg, open:()=>this.openThesis(id) }; }),
+        approve:()=>this.openExecute(p.id), reject:()=>this.openReject(p.id) };
+    });
+    const decisionsVM = s.decisions.map(dc=>({ symbol:dc.symbol, when:dc.when, note:dc.note,
+      label:dc.action==='executed'?'已執行':'已否決', color:dc.action==='executed'?'#0f8a5f':'#c0392b',
+      bg:dc.action==='executed'?'#e6f4ee':'#fbeae7', icon:dc.action==='executed'?'✓':'✕' }));
+
+    let modalVM = { open:false };
+    if(s.modal){
+      const stop=(e)=>{ if(e&&e.stopPropagation) e.stopPropagation(); };
+      const v={ open:true, isExecute:s.modal.type==='execute', isReject:s.modal.type==='reject', isReport:s.modal.type==='report',
+        price:s.form.price, size:s.form.size, note:s.form.note, status:s.form.status,
+        setPrice:(e)=>this.setForm('price',e.target.value), setSize:(e)=>this.setForm('size',e.target.value), setNote:(e)=>this.setForm('note',e.target.value),
+        close:()=>this.closeModal(), stop, confirmExecute:()=>this.confirmExecute(), confirmReject:()=>this.confirmReject(), confirmReport:()=>this.confirmReport() };
+      if(s.modal.type==='report'){ const t=s.trades.find(x=>x.id===s.modal.id); const d=this.D[t.dir];
+        v.title='回報部位現況'; v.symbol=t.symbol; v.name=t.name; v.dirLabel=d.label; v.dirColor=d.color; v.dirBg=d.bg;
+        v.statusOpts=[['holding','持有中'],['trim','部分了結'],['closed','已平倉']].map(([k,l])=>({ label:l, set:()=>this.setForm('status',k),
+          style:'flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:12.5px;font-weight:500;cursor:pointer;border:1.5px solid '+(s.form.status===k?ac:'#e8eaf0')+';color:'+(s.form.status===k?ac:'#69707d')+';background:'+(s.form.status===k?'#f7f9ff':'#fff') })); }
+      else { const p=s.proposals.find(x=>x.id===s.modal.id); const d=this.D[p.dir];
+        v.title=s.modal.type==='execute'?'核准並回報成交':'否決此提案'; v.symbol=p.symbol; v.name=p.name; v.dirLabel=d.label; v.dirColor=d.color; v.dirBg=d.bg;
+        v.propEntryText=this.price(p.unit,p.entry); v.tpText=this.price(p.unit,p.tp); v.slText=this.price(p.unit,p.sl); v.sizeText=p.sizeText; }
+      modalVM=v;
+    }
+
+    return {
+      accent:ac,
+      isDashboard:s.view==='dashboard', isDesk:s.view==='desk', isPositions:s.view==='positions', isResearch:s.view==='research',
+      isTrade:s.view==='trade', isThesis:s.view==='thesis', isAssign:s.view==='assign',
+      hasProposals:deskPending>0, noProposals:deskPending===0, deskPending, proposals:proposalsVM, decisions:decisionsVM, modal:modalVM, goDesk:this.go('desk'),
+      pageTitle:titles[s.view][0], pageSub:titles[s.view][1],
+      pnlPill:this.signed(totalPnl), pnlColor:totalPnl>=0?'#0f8a5f':'#c0392b',
+      nav, goAssign:this.go('assign'), backPositions:this.go('positions'), backResearch:this.go('research'),
+
+      kpis:[
+        { label:'總資產', value:'$2,480,000', delta:'▲ 4.8%', sub:'較上月', color:'#0f8a5f' },
+        { label:'未實現損益', value:this.signed(totalPnl), delta:'▲ 3.97%', sub:'投入成本報酬', color:'#0f8a5f' },
+        { label:'今日損益', value:'+$6,180', delta:'▲ 0.25%', sub:'日內', color:'#0f8a5f' },
+        { label:'活躍部位', value:'4', delta:'5 篇', sub:'研究支撐中', color:'#69707d' },
+      ],
+
+      team: this.team.map(m=>{ const st=this.S[m.status], av=this.AV[m.id];
+        return { tag:m.tag, name:m.name, role:m.role, focus:m.focus,
+          statusLabel:st.label, statusColor:st.color, pulse:st.live?'live':'', avBg:av.bg, avColor:av.color }; }),
+      teamMini: this.team.map(m=>{ const st=this.S[m.status];
+        return { role:m.role, statusLabel:st.label, dot:st.color, pulse:st.live?'live':'' }; }),
+
+      theses: this.theses.map(t=>this.thesisVM(t)),
+      trades: this.state.trades.map(p=>this.tradeVM(p)),
+
+      curTrade, curThesis,
+
+      topic:s.topic, setTopic:(e)=>this.setState({topic:e.target.value}),
+      facetChips, priorityOpts, submitStyle, submitTask:()=>this.submitTask(),
+      taskList,
+    };
+  }
+}
+</script>
+</body>
+</html>
