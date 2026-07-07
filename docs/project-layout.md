@@ -9,10 +9,16 @@ apps/
   api/                    Backend API app boundary
   web/                    Frontend app boundary
 
+src/
+  studio_api/             FastAPI backend source
+  studio_domain/          Product domain rules
+  studio_schemas/         Shared Pydantic schemas
+  source_tools/           Reusable source ingestion and media helpers
+
 packages/
   domain/                 Product domain model and lifecycle rules
   schemas/                API, persistence, and agent IO schemas
-  source-tools/           Reusable RSS/media/transcript/LLM package
+  source-tools/           Reusable RSS/media/transcript/LLM tests and docs
 
 services/
   ingestion/              Evidence ingestion and normalization
@@ -61,6 +67,6 @@ Directories start with README files rather than empty packages. Add executable c
 When production app scaffolds are added:
 
 - document install/dev/test/lint commands in `AGENTS.md`,
-- keep `packages/source-tools` packaging separate from product app code,
+- keep Python packages imported from root `src/` during development unless a dedicated packaging task is introduced,
 - use Context7 for current framework/API docs,
 - verify frontend workflow with Playwright.

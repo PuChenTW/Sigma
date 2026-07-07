@@ -19,10 +19,16 @@ apps/
   api/                    Backend API app boundary
   web/                    Frontend app boundary
 
+src/
+  studio_api/             FastAPI backend source
+  studio_domain/          Product domain rules
+  studio_schemas/         Shared Pydantic schemas
+  source_tools/           Reusable RSS/media/transcript/LLM package
+
 packages/
   domain/                 Product domain model and lifecycle rules
   schemas/                API, persistence, and agent IO schemas
-  source-tools/           Reusable RSS/media/transcript/LLM package
+  source-tools/           Reusable source_tools tests and docs
 
 services/
   ingestion/              Evidence ingestion and normalization
@@ -54,7 +60,7 @@ Topic
 
 ## Current Tool Layer Setup
 
-The only executable package currently configured in `pyproject.toml` is `source_tools`, located at `packages/source-tools/src/source_tools`.
+`source_tools` is imported from local source during development, located at `src/source_tools`. The root `pyproject.toml` is configured with `tool.uv.package = false`, so `uv sync` does not build or install a local `source-tools` wheel.
 
 ```bash
 uv sync --group dev
@@ -95,9 +101,16 @@ summary = await summarize_content(
 ## Verify Current Code
 
 ```bash
-uv run pytest packages/source-tools/tests -q
-uv run ruff check .
-uv build
+make test-source-tools
+make test-api
+make lint
 ```
 
-When production `apps/api` or `apps/web` scaffolds are added, document their install, dev, lint, and test commands here and in `AGENTS.md`.
+## API Development
+
+```bash
+make sync
+make api
+```
+
+Local JSON persistence defaults to `.local/studio-api.json`. Override it with `STUDIO_API_DATA_FILE` when needed.

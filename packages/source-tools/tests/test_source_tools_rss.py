@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from source_tools.rss import entry_external_id, entry_to_item, fetch_feed_items, parse_published
 
 

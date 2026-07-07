@@ -6,8 +6,9 @@ Reusable Python package for source ingestion and source-grounded text workflows.
 
 ```text
 packages/source-tools/
-  src/source_tools/       Importable Python package
-  tests/                  Focused package tests
+  tests/                  Focused tests for source_tools
+
+src/source_tools/         Importable Python package
 ```
 
 ## Responsibility
@@ -28,7 +29,6 @@ packages/source-tools/
 From the repository root:
 
 ```bash
-uv run pytest packages/source-tools/tests -q
-uv run ruff check .
-uv build
+make test-source-tools
+make lint
 ```

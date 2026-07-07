@@ -604,6 +604,22 @@ wheels = [
 ]
 
 [[package]]
+name = "fastapi"
+version = "0.139.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "annotated-doc" },
+    { name = "pydantic" },
+    { name = "starlette" },
+    { name = "typing-extensions" },
+    { name = "typing-inspection" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/d3/af/a5f50ccfa659ec1802cb4ca842c23f06d906a8cc9aef6016a2caeea3d4ed/fastapi-0.139.0.tar.gz", hash = "sha256:99ab7b2d92223c76d6cf10757ab3f89d45b38267fc20b2a136cf02f6beac3145", size = 423016, upload-time = "2026-07-01T16:35:33.436Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/9e/7c/8e3c6ad324ea5cb36604fc3f968554887891c316d9dfde57761611d907ad/fastapi-0.139.0-py3-none-any.whl", hash = "sha256:cf15e1e9e667ddb0ad63811e60bd11390d1aac838ca4a7a23f421807b2308189", size = 130339, upload-time = "2026-07-01T16:35:32.19Z" },
+]
+
+[[package]]
 name = "fastavro"
 version = "1.12.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2535,11 +2551,13 @@ wheels = [
 [[package]]
 name = "source-tools"
 version = "0.1.0"
-source = { editable = "." }
+source = { virtual = "." }
 dependencies = [
+    { name = "fastapi" },
     { name = "feedparser" },
     { name = "httpx" },
     { name = "pydantic-ai" },
+    { name = "uvicorn" },
 ]
 
 [package.optional-dependencies]
@@ -2559,6 +2577,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "fastapi", specifier = ">=0.128" },
     { name = "faster-whisper", marker = "extra == 'asr'", specifier = ">=1.0" },
     { name = "feedparser", specifier = ">=6.0" },
     { name = "groq", marker = "extra == 'asr'", specifier = ">=0.8" },
@@ -2566,6 +2585,7 @@ requires-dist = [
     { name = "pydantic-ai", specifier = ">=0.0.49" },
     { name = "sherpa-onnx", marker = "extra == 'asr'", specifier = ">=1.13.3" },
     { name = "sherpa-onnx-core", marker = "extra == 'asr'", specifier = ">=1.13.3" },
+    { name = "uvicorn", specifier = ">=0.35" },
 ]
 provides-extras = ["asr"]
 

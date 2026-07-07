@@ -184,28 +184,29 @@ Simplicity beats cleverness. Delete aggressively.
 ## Commands
 
 ```bash
-uv sync --group dev
-uv sync --group dev --extra asr   # only when testing real ASR backends
-uv run pytest packages/source-tools/tests -q
-uv run ruff check .
-uv run ruff format .
-uv build
+make sync
+make sync-asr   # only when testing real ASR backends
+make api
+make test-source-tools
+make test-api
+make lint
+make format
+make check
 ```
 
-There is no production frontend/backend app scaffold yet. When adding one, document its install, dev, lint, and test commands here.
+Local API JSON persistence defaults to `.local/studio-api.json`. Override it with `STUDIO_API_DATA_FILE` when needed.
 
 ## Testing Expectations
 
 - Add or update focused tests for every public API change.
 - Mock external network, ASR providers, market data providers, and LLM calls in tests.
-- Run `uv run pytest packages/source-tools/tests -q` before handing off `source_tools` changes.
-- Run `uv run ruff check .` for Python code edits.
-- For packaging changes, run `uv build` and keep generated `dist/` artifacts out of git.
+- Run `make test-source-tools` before handing off `source_tools` changes.
+- Run `make lint` for Python code edits.
 - For frontend work, use Playwright to verify the actual user workflow, not only static rendering.
 
-## Packaging
+## Local Source Imports
 
-`pyproject.toml` currently builds only the `source_tools` package from `packages/source-tools/src/source_tools` into the wheel. Future Studio application code should be packaged separately from the reusable tool layer unless there is a deliberate repository restructure.
+`pyproject.toml` is configured with `tool.uv.package = false`, so local development does not build or install a `source_tools` wheel. Python packages live under the root `src/` directory; pytest imports that source root through `pythonpath`, and API commands use `uvicorn --app-dir src`.
 
 ## Git Hygiene
 
