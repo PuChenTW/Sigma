@@ -8,9 +8,9 @@ This repository also contains `source_tools`, a reusable tool layer for RSS inge
 
 ## Product Docs
 
-- [Codex design context](docs/ai-investment-research-studio-codex-context.md)
-- [MVP scope](docs/ai-investment-research-studio-mvp-scope.md)
-- [Project layout](docs/project-layout.md)
+- [Product](docs/product.md)
+- [Architecture](docs/architecture.md)
+- [Status and roadmap](docs/status-and-roadmap.md)
 
 ## Repository Layout
 
@@ -36,7 +36,7 @@ docs/                     Product, architecture, and planning docs
 
 ## MVP
 
-The first MVP validates one vertical slice:
+The MVP validates one vertical slice:
 
 ```text
 Topic
@@ -90,7 +90,7 @@ summary = await summarize_content(
 )
 ```
 
-## Verify Current Code
+## Verify
 
 ```bash
 make check
