@@ -35,7 +35,9 @@ src/
 frontend/             thin Next.js MVP workflow UI and Playwright tests
 frontend_prototype/   design reference only
 tests/                focused Python tests
-docs/                 product, architecture, status, and roadmap docs
+docs/
+  product/            product north star, status, roadmap, and evolution plan
+  technical/          architecture, API design, and technical records
 ```
 
 Do not keep empty `apps/`, `packages/`, `services/`, or `vendor/` scaffold directories. Add concrete modules only when implementation needs them.
@@ -108,6 +110,27 @@ DecisionProposal
   becomes InvestmentDecision after approve / reject
 ```
 
+Prototype-aligned future entities should be added only when their lifecycle is real:
+
+- `ThesisVersion`: added when challenge/refinement can create durable revisions.
+- `ProposalFeedback`: added when reject/defer/request-more-research feedback needs structured reuse.
+- `InvestmentPosition`: added when an approved decision or explicit manual entry becomes a paper position.
+- `PositionUpdate`: added when the user can record price, status, partial exit, or thesis-validity changes over time.
+- `PortfolioSnapshot`: added when dashboard aggregates need a point-in-time risk/exposure view.
+
+These should extend the lineage chain rather than replace it:
+
+```text
+Evidence
+  -> ResearchArtifact
+  -> Thesis / ThesisVersion
+  -> DecisionProposal
+  -> InvestmentDecision
+  -> InvestmentPosition
+  -> PositionUpdate
+  -> PortfolioSnapshot
+```
+
 ## Design Boundaries
 
 Keep these concepts separate:
@@ -118,8 +141,12 @@ Keep these concepts separate:
 - `Role != Runtime Agent Instance`
 - `Deterministic Computation != LLM Reasoning`
 - `TradingAgents State != Studio Domain Model`
+- `Approval != Trade Execution`
+- `Position != Portfolio Dashboard`
 
 These boundaries should remain true even after adding real orchestration, richer evidence retrieval, or a real Trading Committee engine.
+
+For prototype-aligned expansion, dashboard screens must aggregate durable records. They should not introduce separate dashboard-only state for proposals, positions, P&L, or research status.
 
 ## Workflow Boundary
 
@@ -203,29 +230,9 @@ Storage should remain compatible with future PostgreSQL by using:
 
 Future production persistence should move to PostgreSQL, with FTS and `pgvector` when evidence retrieval becomes real.
 
-## API Shape
+## API Design
 
-Current API surface is centered around projects, workflow execution, committee proposals, and decisions:
-
-```text
-POST /research-projects
-GET /research-projects
-GET /research-projects/{project_id}
-GET /research-projects/{project_id}/tasks
-GET /research-projects/{project_id}/activity-events
-GET /research-projects/{project_id}/evidence
-POST /research-projects/{project_id}/evidence
-GET /research-projects/{project_id}/citations
-GET /research-projects/{project_id}/artifacts
-GET /research-projects/{project_id}/thesis
-GET /research-projects/{project_id}/decision-proposals
-GET /research-projects/{project_id}/investment-decisions
-POST /research-projects/{project_id}/run-demo-workflow
-POST /research-projects/{project_id}/committee/evaluate
-GET /decision-proposals/{proposal_id}
-POST /decision-proposals/{proposal_id}/approve
-POST /decision-proposals/{proposal_id}/reject
-```
+Current API surface and API rules live in `docs/technical/api.md`.
 
 Keep route handlers thin. Workflow and domain behavior should live in dedicated modules.
 

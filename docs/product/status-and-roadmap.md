@@ -2,6 +2,9 @@
 
 This document tracks what the repository currently supports and where the next useful work likely is.
 
+Product north star: `docs/product/north-star.md`.
+Evolution plan: `docs/product/evolution-plan.md`.
+
 ## Current Status
 
 The MVP vertical slice is implemented as a deterministic local demo:
@@ -42,6 +45,7 @@ Implemented areas:
 - Evidence entry is manual only. There is no server-side URL fetching, article extraction, PDF parsing, transcript ingestion, RSS discovery, market data, or LLM dependency in the demo path.
 - The Trading Committee is a stub and does not run TradingAgents.
 - Approval or rejection records an investment decision only. It does not create trades, positions, or brokerage side effects.
+- The UI does not yet match the broader prototype experience in `frontend_prototype/`: there is no dashboard, research report library, multi-topic task queue, decision desk with multiple proposals, position workspace, or execution reporting flow.
 - Local JSON persistence is for development and demo use, not production deployment.
 - There is no production auth, background job system, deployment story, or observability stack.
 - The UI is a workflow proof, not a full dashboard or design system.
@@ -83,15 +87,28 @@ Local API JSON persistence defaults to `.local/studio-api.json`. Override it wit
 
 ## Recommended Next Direction
 
-The next step should deliberately choose one axis of progress instead of expanding everything at once.
+The next step should deliberately choose one axis of progress instead of expanding everything at once. `frontend_prototype/` should guide the target experience, but implementation should move through the phase gates in `docs/product/evolution-plan.md`.
 
 Recommended order:
 
-1. Improve research realism.
-2. Improve evidence and retrieval.
-3. Integrate a real committee engine.
-4. Add durable infrastructure only when the workflow requires it.
-5. Expand portfolio and position workflows after decision quality is useful.
+1. Improve research realism with real source ingestion and evidence review.
+2. Add the research workspace shell once it can display durable project, task, thesis, citation, proposal, and decision records.
+3. Allow multiple proposals and a richer Decision Desk once thesis/proposal traceability remains solid.
+4. Add paper position tracking after approved decisions have useful lifecycle semantics.
+5. Add market data, portfolio dashboards, durable infrastructure, real committee engines, and production concerns only when the workflow requires them.
+
+## Current Product Plan
+
+The detailed phase plan lives in `docs/product/evolution-plan.md`.
+
+Current stance:
+
+- P0 is implemented as a deterministic local vertical slice.
+- P1, the real evidence loop, is the recommended next milestone.
+- P2 research workspace should follow once there are trustworthy research records to organize.
+- P3-P5 should wait until proposal traceability, decision lifecycle, and paper position semantics are stable.
+
+Do not start a later phase only to make the UI look complete. Start it when the earlier phase has a working end-to-end path, focused tests, and clear domain records to aggregate.
 
 ## Option A: Improve Research Realism
 
@@ -109,7 +126,7 @@ Possible work:
 - Keep deterministic fixtures as test fallback.
 - Preserve validation that generated artifacts and theses cannot cite missing or foreign evidence.
 
-This is likely the highest-value next direction because it tests whether the product remains trustworthy with real inputs.
+This is the highest-value trust direction and corresponds to P1 of the prototype-aligned roadmap. It should happen before broad workspace, Decision Desk, or position expansion unless the immediate goal is only to improve navigation over already-persisted records.
 
 ## Option B: Improve Evidence Storage And Retrieval
 
@@ -176,7 +193,7 @@ Do not start here unless deployment is the immediate product need.
 
 ## Near-Term Recommendation
 
-The most pragmatic next milestone is:
+The most pragmatic next milestone for aligning the product with `frontend_prototype/` is P1:
 
 ```text
 Real evidence ingestion
@@ -187,4 +204,4 @@ Real evidence ingestion
   -> same Playwright E2E workflow
 ```
 
-This keeps the current vertical slice intact while replacing the least realistic part of the post-MVP demo: manual evidence entry and deterministic research text.
+This keeps the current vertical slice intact while replacing the least realistic part of the demo: manual-only evidence entry and deterministic research text. The broader workspace should follow once it has trustworthy research records to organize.

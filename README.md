@@ -8,9 +8,12 @@ This repository also contains `source_tools`, a reusable tool layer for RSS inge
 
 ## Product Docs
 
-- [Product](docs/product.md)
-- [Architecture](docs/architecture.md)
-- [Status and roadmap](docs/status-and-roadmap.md)
+- [Documentation index](docs/README.md)
+- [Product north star](docs/product/north-star.md)
+- [Status and roadmap](docs/product/status-and-roadmap.md)
+- [Product evolution plan](docs/product/evolution-plan.md)
+- [Architecture](docs/technical/architecture.md)
+- [API design](docs/technical/api.md)
 
 ## Repository Layout
 
@@ -31,7 +34,8 @@ tests/
 
 frontend/                 Thin Next.js MVP workflow UI and Playwright test
 frontend_prototype/       Design prototype reference
-docs/                     Product, architecture, and planning docs
+docs/product/             Product north star, status, roadmap, and evolution plan
+docs/technical/           Architecture, API design, and technical records
 ```
 
 ## MVP

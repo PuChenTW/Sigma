@@ -12,9 +12,11 @@ This is not a stock chatbot, a single-ticker analyzer, an auto-trading bot, or a
 
 Read these before major product or architecture work:
 
-- `docs/product.md`: problem, product goals, MVP scope, workflow, and future product direction.
-- `docs/architecture.md`: system boundaries, domain model, technical architecture, and integration rules.
-- `docs/status-and-roadmap.md`: implemented status, limitations, commands, and next possible directions.
+- `docs/product/north-star.md`: final product shape, target experience, product capabilities, and product boundaries.
+- `docs/product/status-and-roadmap.md`: implemented status, limitations, commands, near-term roadmap, and expansion sequencing.
+- `docs/product/evolution-plan.md`: staged path from the current MVP toward the prototype-like product experience.
+- `docs/technical/architecture.md`: system boundaries, domain model, technical architecture, and integration rules.
+- `docs/technical/api.md`: current API surface and API design rules.
 
 ## Current Repository State
 
