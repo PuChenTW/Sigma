@@ -12,7 +12,6 @@ from studio_schemas import (
     CreateEvidenceResponse,
     CreateResearchProjectRequest,
     DecisionProposal,
-    DemoWorkflowResponse,
     Evidence,
     EvidenceCitation,
     InvestmentDecision,
@@ -20,10 +19,11 @@ from studio_schemas import (
     ResearchArtifact,
     ResearchProject,
     ResearchTask,
+    ResearchWorkflowResponse,
     Thesis,
     new_id,
 )
-from studio_workflows import WorkflowError, plan_tasks, run_demo_workflow
+from studio_workflows import WorkflowError, plan_tasks, run_research_workflow
 
 router = APIRouter(prefix="/research-projects", tags=["research-projects"])
 StoreDep = Annotated[JsonStore, Depends(get_store)]
@@ -250,25 +250,25 @@ def list_project_citations(project_id: str, store: StoreDep) -> list[EvidenceCit
 
 
 @router.post(
-    "/{project_id}/run-demo-workflow",
-    response_model=DemoWorkflowResponse,
-    summary="Run deterministic demo workflow",
+    "/{project_id}/run-research",
+    response_model=ResearchWorkflowResponse,
+    summary="Run deterministic research workflow",
     description=(
-        "Run the local deterministic MVP workflow for a project. The runner completes fixed desk tasks, "
+        "Run the local deterministic research workflow for a project. The runner completes fixed desk tasks, "
         "selects user evidence or SMR fallback fixtures, generates cited artifacts, and synthesizes a thesis."
     ),
     response_description="The workflow result, including project, tasks, evidence, citations, artifacts, thesis, and activity events.",
     responses={**PROJECT_NOT_FOUND_RESPONSE, **CONFLICT_RESPONSE},
 )
-def run_project_demo_workflow(project_id: str, store: StoreDep) -> DemoWorkflowResponse:
+def run_project_research_workflow(project_id: str, store: StoreDep) -> ResearchWorkflowResponse:
     try:
-        result = run_demo_workflow(store, project_id)
+        result = run_research_workflow(store, project_id)
     except KeyError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found.") from exc
     except WorkflowError as exc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
 
-    return DemoWorkflowResponse(
+    return ResearchWorkflowResponse(
         project=result.project,
         tasks=result.tasks,
         evidence=result.evidence,

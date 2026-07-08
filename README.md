@@ -4,7 +4,7 @@ AI-assisted investment research operating system.
 
 The user acts as a capital provider / investor / CIO: they assign open-ended research topics, inspect AI research team progress, review source-grounded theses, and decide whether a thesis should become an investment decision proposal.
 
-This repository also contains `source_tools`, a reusable tool layer for RSS ingestion, transcript extraction, ASR fallback, and source-grounded LLM workflows.
+This repository also contains `source_tools`, an independent reusable tool layer for future RSS ingestion, transcript extraction, ASR fallback, and source-grounded LLM workflows. The current Studio MVP does not depend on it at runtime.
 
 ## Product Docs
 
@@ -30,7 +30,7 @@ src/
   studio_domain/          Product domain rules
   studio_schemas/         Shared Pydantic schemas
   studio_workflows/       Deterministic workflow and committee stub
-  source_tools/           Reusable RSS/media/transcript/LLM package
+  source_tools/           Independent reusable RSS/media/transcript/LLM helpers
 
 tests/
   source_tools/           Reusable tool-layer tests
@@ -63,7 +63,7 @@ Topic
 
 ## Current Tool Layer Setup
 
-`source_tools` is imported from local source during development, located at `src/source_tools`. The root `pyproject.toml` is configured with `tool.uv.package = false`, so `uv sync` does not build or install a local `source-tools` wheel.
+`source_tools` is imported from local source during development, located at `src/source_tools`. The root `pyproject.toml` is configured with `tool.uv.package = false`, so `uv sync` does not build or install a local Studio or `source_tools` wheel.
 
 ```bash
 uv sync --group dev

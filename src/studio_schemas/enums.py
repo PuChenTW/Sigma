@@ -30,14 +30,6 @@ class EvidenceSourceType(StrEnum):
     ARTICLE = "article"
     FIXTURE = "fixture"
     NOTE = "note"
-    PDF = "pdf"
-    TRANSCRIPT = "transcript"
-
-
-class Priority(StrEnum):
-    HIGH = "high"
-    LOW = "low"
-    NORMAL = "normal"
 
 
 class ProjectStatus(StrEnum):
@@ -49,9 +41,6 @@ class ProjectStatus(StrEnum):
 
 
 class ProposalAction(StrEnum):
-    BUY = "buy"
-    HOLD = "hold"
-    SELL = "sell"
     WATCHLIST = "watchlist"
 
 

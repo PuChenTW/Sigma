@@ -24,7 +24,7 @@ def client(store: JsonStore) -> Iterator[TestClient]:
 
 
 def test_create_project_creates_fixed_tasks(client: TestClient) -> None:
-    response = client.post("/research-projects", json={"topic": "Small modular reactors", "priority": "normal"})
+    response = client.post("/research-projects", json={"topic": "Small modular reactors"})
 
     assert response.status_code == 201
     project = response.json()
@@ -49,6 +49,15 @@ def test_create_project_creates_fixed_tasks(client: TestClient) -> None:
 
 def test_create_project_rejects_empty_topic(client: TestClient) -> None:
     response = client.post("/research-projects", json={"topic": ""})
+
+    assert response.status_code == 422
+
+
+@pytest.mark.parametrize("stale_field", ["priority", "facets"])
+def test_create_project_rejects_removed_planning_fields(client: TestClient, stale_field: str) -> None:
+    payload = {"topic": "Small modular reactors", stale_field: "normal" if stale_field == "priority" else ["industry"]}
+
+    response = client.post("/research-projects", json=payload)
 
     assert response.status_code == 422
 
@@ -158,10 +167,10 @@ def test_create_project_evidence_rejects_invalid_citation_fields(client: TestCli
     assert response.status_code == 422
 
 
-def test_run_demo_workflow_exposes_artifacts_and_thesis(client: TestClient) -> None:
+def test_run_research_workflow_exposes_artifacts_and_thesis(client: TestClient) -> None:
     project = client.post("/research-projects", json={"topic": "SMR investment opportunity"}).json()
 
-    workflow_response = client.post(f"/research-projects/{project['id']}/run-demo-workflow")
+    workflow_response = client.post(f"/research-projects/{project['id']}/run-research")
 
     assert workflow_response.status_code == 200
     result = workflow_response.json()
@@ -183,7 +192,7 @@ def test_run_demo_workflow_exposes_artifacts_and_thesis(client: TestClient) -> N
 
 def test_committee_evaluation_creates_proposal(client: TestClient, store: JsonStore) -> None:
     project = client.post("/research-projects", json={"topic": "SMR investment opportunity"}).json()
-    client.post(f"/research-projects/{project['id']}/run-demo-workflow")
+    client.post(f"/research-projects/{project['id']}/run-research")
 
     response = client.post(f"/research-projects/{project['id']}/committee/evaluate")
 
@@ -214,7 +223,7 @@ def test_committee_evaluation_creates_proposal(client: TestClient, store: JsonSt
 
 def test_committee_evaluation_rejects_broken_candidate_citations(client: TestClient, store: JsonStore) -> None:
     project = client.post("/research-projects", json={"topic": "SMR investment opportunity"}).json()
-    client.post(f"/research-projects/{project['id']}/run-demo-workflow")
+    client.post(f"/research-projects/{project['id']}/run-research")
     thesis = store.list("theses")[0]
     broken_candidate = thesis.candidate_asset.model_copy(update={"citation_ids": ["citation_missing"]})
     store.update("theses", thesis.id, {"candidate_asset": broken_candidate.model_dump(mode="json")})
@@ -234,7 +243,7 @@ def test_committee_evaluation_requires_thesis(client: TestClient) -> None:
 
 def test_approve_proposal_records_decision_and_blocks_repeat(client: TestClient, store: JsonStore) -> None:
     project = client.post("/research-projects", json={"topic": "SMR investment opportunity"}).json()
-    client.post(f"/research-projects/{project['id']}/run-demo-workflow")
+    client.post(f"/research-projects/{project['id']}/run-research")
     proposal = client.post(f"/research-projects/{project['id']}/committee/evaluate").json()
 
     response = client.post(f"/decision-proposals/{proposal['id']}/approve", json={"user_note": "Track as watchlist only."})
@@ -262,7 +271,7 @@ def test_approve_proposal_records_decision_and_blocks_repeat(client: TestClient,
 
 def test_reject_proposal_records_decision(client: TestClient) -> None:
     project = client.post("/research-projects", json={"topic": "SMR investment opportunity"}).json()
-    client.post(f"/research-projects/{project['id']}/run-demo-workflow")
+    client.post(f"/research-projects/{project['id']}/run-research")
     proposal = client.post(f"/research-projects/{project['id']}/committee/evaluate").json()
 
     response = client.post(f"/decision-proposals/{proposal['id']}/reject", json={"user_note": "Risk is too high."})

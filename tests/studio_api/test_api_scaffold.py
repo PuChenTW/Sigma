@@ -28,7 +28,8 @@ def test_mvp_route_structure_is_registered() -> None:
     assert "/research-projects/{project_id}/decision-proposals" in paths
     assert "/research-projects/{project_id}/investment-decisions" in paths
     assert "/research-projects/{project_id}/thesis" in paths
-    assert "/research-projects/{project_id}/run-demo-workflow" in paths
+    assert "/research-projects/{project_id}/run-research" in paths
+    assert "/research-projects/{project_id}/run-demo-workflow" not in paths
     assert "/research-projects/{project_id}/committee/evaluate" in paths
     assert "/decision-proposals/{proposal_id}" in paths
     assert "/decision-proposals/{proposal_id}/approve" in paths

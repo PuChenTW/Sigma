@@ -6,7 +6,6 @@ import {
   ActivityEvent,
   CreateEvidenceRequest,
   DecisionProposal,
-  DemoWorkflowResponse,
   EvidenceDesk,
   EvidenceSourceType,
   Evidence,
@@ -15,6 +14,7 @@ import {
   ResearchArtifact,
   ResearchProject,
   ResearchTask,
+  ResearchWorkflowResponse,
   Thesis,
   apiRequest,
 } from "../lib/api";
@@ -158,7 +158,7 @@ export default function StudioWorkflowPage() {
     setDecision(null);
 
     try {
-      const result = await apiRequest<DemoWorkflowResponse>(`/research-projects/${project.id}/run-demo-workflow`, {
+      const result = await apiRequest<ResearchWorkflowResponse>(`/research-projects/${project.id}/run-research`, {
         method: "POST",
       });
       setProject(result.project);

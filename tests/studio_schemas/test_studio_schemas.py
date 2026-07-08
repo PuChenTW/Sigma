@@ -73,6 +73,18 @@ def test_create_evidence_request_rejects_empty_summary() -> None:
         )
 
 
+@pytest.mark.parametrize("source_type", ["fixture", "pdf", "transcript"])
+def test_create_evidence_request_rejects_unsupported_user_source_types(source_type: str) -> None:
+    with pytest.raises(ValidationError, match="source_type"):
+        CreateEvidenceRequest(
+            source_type=source_type,
+            desk=Desk.INDUSTRY,
+            title="Unsupported source",
+            summary="Summary of source.",
+            citations=[{"excerpt": "Source excerpt.", "location": "manual note"}],
+        )
+
+
 def test_create_evidence_request_requires_citation_excerpt() -> None:
     with pytest.raises(ValidationError, match="excerpt"):
         CreateEvidenceRequest(
@@ -147,3 +159,22 @@ def test_schemas_cover_mvp_records() -> None:
 def test_candidate_asset_requires_support_reference() -> None:
     with pytest.raises(ValidationError, match="rationale must reference"):
         CandidateAsset(symbol="SMR", name="NuScale Power", rationale="Pure-play exposure")
+
+
+@pytest.mark.parametrize("action", ["buy", "hold", "sell"])
+def test_decision_proposal_rejects_unsupported_actions(action: str) -> None:
+    with pytest.raises(ValidationError, match="action"):
+        DecisionProposal(
+            project_id="project_1",
+            thesis_id="thesis_1",
+            asset="SMR",
+            action=action,
+            conviction=ProposalConviction.MEDIUM,
+            suggested_position_size="0%",
+            horizon="12 months",
+            entry_conditions=["Wait for committee approval"],
+            invalidation_conditions=["Thesis breaks"],
+            primary_risks=["Execution risk"],
+            rationale="Needs bounded review",
+            citation_ids=["citation_1"],
+        )

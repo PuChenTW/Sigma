@@ -13,7 +13,7 @@ def create_app() -> FastAPI:
         summary="Source-grounded investment research workflow API.",
         description=(
             "API for the local Studio MVP: create research projects, attach cited evidence, "
-            "run the deterministic demo workflow, evaluate a bounded committee proposal, "
+            "run the deterministic research workflow, evaluate a bounded committee proposal, "
             "and record the user's approve/reject decision. Research, evidence, thesis, "
             "proposal, and decision records remain separate so lineage is auditable."
         ),

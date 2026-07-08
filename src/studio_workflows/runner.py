@@ -36,7 +36,7 @@ class WorkflowStore(Protocol):
 
 
 @dataclass(frozen=True)
-class DemoWorkflowResult:
+class ResearchWorkflowResult:
     project: ResearchProject
     tasks: list[ResearchTask]
     evidence: list[Evidence]
@@ -46,13 +46,13 @@ class DemoWorkflowResult:
     activity_events: list[ActivityEvent]
 
 
-def run_demo_workflow(store: WorkflowStore, project_id: str) -> DemoWorkflowResult:
+def run_research_workflow(store: WorkflowStore, project_id: str) -> ResearchWorkflowResult:
     project = store.get("projects", project_id)
     if project is None:
         raise KeyError(f"project not found: {project_id}")
 
     project = store.update("projects", project.id, {"status": ProjectStatus.RUNNING, "updated_at": utc_now()})
-    _create_event(store, project.id, None, ActivityEventType.WORKFLOW_STARTED, "Started deterministic SMR workflow.")
+    _create_event(store, project.id, None, ActivityEventType.WORKFLOW_STARTED, "Started deterministic research workflow.")
 
     tasks = _ensure_tasks(store, project)
     evidence, citations = _ensure_evidence_bundle(store, project)
@@ -87,7 +87,7 @@ def run_demo_workflow(store: WorkflowStore, project_id: str) -> DemoWorkflowResu
     _create_event(store, project.id, None, ActivityEventType.THESIS_CREATED, "Created version 1 thesis.")
     project = store.update("projects", project.id, {"status": ProjectStatus.COMPLETED, "updated_at": utc_now()})
 
-    return DemoWorkflowResult(
+    return ResearchWorkflowResult(
         project=project,
         tasks=_project_tasks(store, project.id),
         evidence=_project_evidence(store, project.id),

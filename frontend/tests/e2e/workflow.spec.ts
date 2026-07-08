@@ -3,10 +3,10 @@ import { expect, test } from "@playwright/test";
 test("runs the SMR research workflow through approval with traceability and refresh", async ({ page }) => {
   await page.goto("/");
 
-  await page.getByLabel("Topic").fill("SMR approval path deterministic demo");
+  await page.getByLabel("Topic").fill("SMR approval path deterministic research");
   await page.getByRole("button", { name: "Create project" }).click();
 
-  await expect(page.getByRole("heading", { name: "SMR approval path deterministic demo" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "SMR approval path deterministic research" })).toBeVisible();
   await expect(page.getByText("Industry demand and supply chain")).toBeVisible();
   await expect(page.getByText("Macro and policy setup")).toBeVisible();
 
@@ -32,7 +32,7 @@ test("runs the SMR research workflow through approval with traceability and refr
   await expect(page.getByRole("button", { name: "Approve" })).toBeDisabled();
 
   await page.reload();
-  await expect(page.getByRole("heading", { name: "SMR approval path deterministic demo" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "SMR approval path deterministic research" })).toBeVisible();
   await expect(page.getByText("Decision recorded: approved")).toBeVisible();
   await expect(page.locator(".artifacts-panel").getByText("IND-1")).toBeVisible();
 
@@ -42,7 +42,7 @@ test("runs the SMR research workflow through approval with traceability and refr
   await expect(page.getByText("Send the active thesis to committee.")).toBeVisible();
   await expect(page.getByText("Decision recorded: approved")).toHaveCount(0);
 
-  await page.getByRole("button", { name: /SMR approval path deterministic demo/ }).click();
+  await page.getByRole("button", { name: /SMR approval path deterministic research/ }).click();
   await expect(page.getByText("Decision recorded: approved")).toBeVisible();
 });
 
@@ -78,7 +78,7 @@ test("uses added evidence in the research artifact citation trace", async ({ pag
 test("runs the reject decision path", async ({ page }) => {
   await page.goto("/");
 
-  await page.getByLabel("Topic").fill("SMR reject path deterministic demo");
+  await page.getByLabel("Topic").fill("SMR reject path deterministic research");
   await page.getByRole("button", { name: "Create project" }).click();
   await page.getByRole("button", { name: "Run research" }).click();
   await expect(page.getByText("SMR-linked equities deserve bounded committee review")).toBeVisible();

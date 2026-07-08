@@ -20,7 +20,7 @@ Next.js UI
   -> local JSON persistence
 ```
 
-The deterministic demo path does not require live network calls, LLM calls, market data, brokerage credentials, or TradingAgents.
+The deterministic research path does not require live network calls, LLM calls, market data, brokerage credentials, or TradingAgents.
 
 The attached product context includes possible future service/package layouts and TradingAgents integration options. Those are planning inputs, not current architecture. The repository should stay concrete and small until product behavior requires a split.
 

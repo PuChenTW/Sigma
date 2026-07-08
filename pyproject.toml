@@ -1,7 +1,7 @@
 [project]
-name = "source-tools"
+name = "ai-investment-research-studio"
 version = "0.1.0"
-description = "Reusable RSS, transcript, ASR, and LLM content tools for agent workflows"
+description = "AI-assisted investment research studio with reusable source tooling"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.128",

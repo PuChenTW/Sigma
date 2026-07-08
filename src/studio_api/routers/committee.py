@@ -56,7 +56,7 @@ def _get_project_or_404(store: JsonStore, project_id: str) -> ResearchProject:
 def _get_project_thesis_or_409(store: JsonStore, project_id: str) -> Thesis:
     theses = [thesis for thesis in store.list("theses") if thesis.project_id == project_id]
     if not theses:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Project has no thesis. Run the demo workflow first.")
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Project has no thesis. Run research first.")
     return sorted(theses, key=lambda thesis: thesis.version)[-1]
 
 

@@ -25,9 +25,9 @@ Read these before major product or architecture work:
 | `src/studio_api/` | FastAPI backend app, routes, dependencies, and local persistence. |
 | `src/studio_domain/` | Product domain rules and lifecycle checks. |
 | `src/studio_schemas/` | API, persistence, and workflow Pydantic schemas. |
-| `src/studio_workflows/` | Deterministic MVP task planning, SMR fixtures, artifact generation, thesis synthesis, and committee proposal stub. |
-| `src/source_tools/` | Reusable RSS, media/transcript, ASR fallback, and source-grounded LLM helpers. |
-| `frontend/` | Thin Next.js workflow UI and Playwright E2E test for the MVP demo path. |
+| `src/studio_workflows/` | Deterministic MVP research workflow, SMR fixtures, artifact generation, thesis synthesis, and committee proposal stub. |
+| `src/source_tools/` | Independent reusable RSS, media/transcript, ASR fallback, and source-grounded LLM helpers; not part of the current Studio runtime path. |
+| `frontend/` | Thin Next.js workflow UI and Playwright E2E test for the MVP research workflow. |
 | `frontend_prototype/` | Design reference only; do not treat prototype runtime code as production architecture. |
 | `tests/` | Focused Python tests for source tools, Studio API, schemas, domain rules, and workflows. |
 
@@ -104,7 +104,7 @@ Local API JSON persistence defaults to `.local/studio-api.json`. Override it wit
 
 ## Local Source Imports
 
-`pyproject.toml` is configured with `tool.uv.package = false`, so local development does not build or install a `source_tools` wheel. Python packages live under the root `src/` directory; pytest imports that source root through `pythonpath`, and API commands use `uvicorn --app-dir src`.
+`pyproject.toml` is configured with `tool.uv.package = false`, so local development does not build or install a local Studio or `source_tools` wheel. Python packages live under the root `src/` directory; pytest imports that source root through `pythonpath`, and API commands use `uvicorn --app-dir src`.
 
 ## Git Hygiene
 

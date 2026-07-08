@@ -7,7 +7,7 @@ Evolution plan: `docs/product/evolution-plan.md`.
 
 ## Current Status
 
-The MVP vertical slice is implemented as a deterministic local demo:
+The MVP vertical slice is implemented as a deterministic local research workflow:
 
 ```text
 Topic
@@ -28,21 +28,23 @@ Implemented areas:
 - Domain transition rules under `src/studio_domain`.
 - Deterministic workflow runner under `src/studio_workflows`.
 - Curated SMR evidence fixtures.
+- Project creation currently accepts a free-form `topic` only; `priority`, `facets`, task dependencies, and blockers are P1 concepts, not current API fields.
 - Project-scoped Evidence Workbench for manual note/article evidence creation.
 - Runner policy that prefers cited user evidence by desk and uses curated fixtures only for missing desk coverage.
 - Cited artifact generation.
 - Thesis synthesis with candidate asset rationale.
 - Trading Committee stub behind an explicit interface.
 - Proposal approve/reject endpoints and persisted decision records.
+- Research workflow run endpoint: `POST /research-projects/{project_id}/run-research`.
 - Thin Next.js workflow UI under `frontend`.
 - Playwright E2E coverage for the primary approve/reject paths and user evidence traceability.
-- Local source import for `src/source_tools` without building a local wheel.
+- `src/source_tools` is retained as independent reusable source infrastructure; the current Studio MVP runtime does not depend on it.
 - Makefile commands for common development, test, lint, build, and E2E flows.
 
 ## Current Limitations
 
 - Research output is still deterministic; user evidence affects citation selection, but artifact and thesis prose are not yet generated from live source analysis.
-- Evidence entry is manual only. There is no server-side URL fetching, article extraction, PDF parsing, transcript ingestion, RSS discovery, market data, or LLM dependency in the demo path.
+- Evidence entry is manual only. There is no server-side URL fetching, article extraction, PDF parsing, transcript ingestion, RSS discovery, market data, or LLM dependency in the current Studio workflow.
 - The Trading Committee is a stub and does not run TradingAgents.
 - Approval or rejection records an investment decision only. It does not create trades, positions, or brokerage side effects.
 - The UI does not yet match the broader prototype experience in `frontend_prototype/`: there is no dashboard, research report library, multi-topic task queue, decision desk with multiple proposals, position workspace, or execution reporting flow.
@@ -109,7 +111,7 @@ The detailed phase plan lives in `docs/product/evolution-plan.md`.
 
 Current stance:
 
-- P0 is implemented as a deterministic local vertical slice.
+- P0 is implemented as a deterministic local research workflow.
 - P1 should be corrected to Research Team Workspace: a product-facing milestone that makes the Studio feel like managing an AI research team.
 - Real evidence ingestion and approval should become an enabling trust slice inside or after the workspace milestone, not the whole product-facing P1.
 - P3-P5 should wait until proposal traceability, decision lifecycle, and paper position semantics are stable.
@@ -120,7 +122,7 @@ Do not start a later phase only to make the UI look complete. Start it when the 
 
 Goal:
 
-- Make the product feel like an AI research operating system instead of a single workflow demo.
+- Make the product feel like an AI research operating system instead of a single workflow proof.
 
 Possible work:
 
@@ -227,4 +229,4 @@ Free-form topic
   -> same committee proposal contract
 ```
 
-This keeps the current vertical slice intact while replacing the least product-like part of the demo: the user cannot yet manage an AI research team. Evidence ingestion and citation validation remain important, but they should be planned as trust infrastructure that supports desk work and thesis review.
+This keeps the current vertical slice intact while replacing the least product-like part of the workflow: the user cannot yet manage an AI research team. Evidence ingestion and citation validation remain important, but they should be planned as trust infrastructure that supports desk work and thesis review.

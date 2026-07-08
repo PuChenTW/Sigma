@@ -2,14 +2,12 @@ from typing import Literal
 
 from pydantic import Field, HttpUrl
 
-from studio_schemas.enums import DecisionType, Desk, EvidenceSourceType, Priority
-from studio_schemas.models import ActivityEvent, Evidence, EvidenceCitation, NonEmptyText, RecordId, ResearchArtifact, ResearchProject, ResearchTask, StudioModel, Thesis
+from studio_schemas.enums import Desk, EvidenceSourceType
+from studio_schemas.models import ActivityEvent, Evidence, EvidenceCitation, NonEmptyText, ResearchArtifact, ResearchProject, ResearchTask, StudioModel, Thesis
 
 
 class CreateResearchProjectRequest(StudioModel):
     topic: NonEmptyText
-    priority: Priority = Priority.NORMAL
-    facets: list[str] = Field(default_factory=list)
 
 
 class CreateCitationInput(StudioModel):
@@ -40,17 +38,7 @@ class HealthResponse(StudioModel):
     status: str = "ok"
 
 
-class NotImplementedResponse(StudioModel):
-    detail: str
-    phase: str = "phase_2"
-
-
-class InvestmentDecisionResponse(StudioModel):
-    proposal_id: RecordId
-    decision: DecisionType
-
-
-class DemoWorkflowResponse(StudioModel):
+class ResearchWorkflowResponse(StudioModel):
     project: ResearchProject
     tasks: list[ResearchTask]
     evidence: list[Evidence]

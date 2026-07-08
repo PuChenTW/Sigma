@@ -124,7 +124,7 @@ export type ActivityEvent = {
   created_at: string;
 };
 
-export type DemoWorkflowResponse = {
+export type ResearchWorkflowResponse = {
   project: ResearchProject;
   tasks: ResearchTask[];
   evidence: Evidence[];
