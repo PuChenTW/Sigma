@@ -5,6 +5,7 @@ from studio_schemas import (
     ActivityEvent,
     ActivityEventType,
     CandidateAsset,
+    CreateEvidenceRequest,
     DecisionProposal,
     Desk,
     Evidence,
@@ -30,6 +31,67 @@ def test_artifact_rejects_missing_citations() -> None:
             summary="Summary",
             findings=["Finding"],
             citation_ids=[],
+        )
+
+
+def test_create_evidence_request_accepts_note_source_type() -> None:
+    request = CreateEvidenceRequest(
+        source_type=EvidenceSourceType.NOTE,
+        desk=Desk.INDUSTRY,
+        title="Customer interview note",
+        summary="A utility customer described rising interest in modular nuclear capacity.",
+        citations=[{"excerpt": "We need firm clean power by 2030.", "location": "manual note"}],
+    )
+
+    assert request.source_type == EvidenceSourceType.NOTE
+    assert request.citations[0].label is None
+
+
+def test_create_evidence_request_accepts_article_source_type_and_optional_label() -> None:
+    request = CreateEvidenceRequest(
+        source_type="article",
+        desk=Desk.MACRO_POLICY,
+        title="Nuclear licensing update",
+        url="https://example.com/nuclear-licensing",
+        summary="The article summarizes licensing changes relevant to advanced nuclear projects.",
+        citations=[{"label": "NRC-1", "excerpt": "Regulators proposed a staged licensing path.", "location": "paragraph 4"}],
+    )
+
+    assert request.source_type == EvidenceSourceType.ARTICLE
+    assert str(request.url) == "https://example.com/nuclear-licensing"
+    assert request.citations[0].label == "NRC-1"
+
+
+def test_create_evidence_request_rejects_empty_summary() -> None:
+    with pytest.raises(ValidationError, match="summary"):
+        CreateEvidenceRequest(
+            source_type=EvidenceSourceType.NOTE,
+            desk=Desk.FUNDAMENTAL,
+            title="Company note",
+            summary=" ",
+            citations=[{"excerpt": "Management expects first revenue after deployment.", "location": "manual note"}],
+        )
+
+
+def test_create_evidence_request_requires_citation_excerpt() -> None:
+    with pytest.raises(ValidationError, match="excerpt"):
+        CreateEvidenceRequest(
+            source_type=EvidenceSourceType.NOTE,
+            desk=Desk.INDUSTRY,
+            title="Demand note",
+            summary="Summary of source.",
+            citations=[{"location": "manual note"}],
+        )
+
+
+def test_create_evidence_request_requires_citation_location() -> None:
+    with pytest.raises(ValidationError, match="location"):
+        CreateEvidenceRequest(
+            source_type=EvidenceSourceType.ARTICLE,
+            desk=Desk.MACRO_POLICY,
+            title="Policy article",
+            summary="Summary of source.",
+            citations=[{"excerpt": "Policy support remains constructive."}],
         )
 
 

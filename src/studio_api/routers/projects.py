@@ -7,6 +7,8 @@ from studio_api.storage import JsonStore
 from studio_schemas import (
     ActivityEvent,
     ActivityEventType,
+    CreateEvidenceRequest,
+    CreateEvidenceResponse,
     CreateResearchProjectRequest,
     DecisionProposal,
     DemoWorkflowResponse,
@@ -18,6 +20,7 @@ from studio_schemas import (
     ResearchProject,
     ResearchTask,
     Thesis,
+    new_id,
 )
 from studio_workflows import WorkflowError, plan_tasks, run_demo_workflow
 
@@ -111,11 +114,48 @@ def list_project_evidence(project_id: str, store: StoreDep) -> list[Evidence]:
     return [item for item in store.list("evidence") if item.project_id == project_id]
 
 
+@router.post("/{project_id}/evidence", response_model=CreateEvidenceResponse, status_code=status.HTTP_201_CREATED)
+def create_project_evidence(project_id: str, request: CreateEvidenceRequest, store: StoreDep) -> CreateEvidenceResponse:
+    project = _get_project_or_404(store, project_id)
+    project_citations = _project_citations(store, project.id)
+
+    evidence = Evidence(
+        id=new_id("evidence"),
+        project_id=project.id,
+        source_type=request.source_type,
+        title=request.title,
+        url=request.url,
+        summary=request.summary,
+        metadata={"desk": request.desk.value, "origin": "user"},
+    )
+    citations = [
+        EvidenceCitation(
+            id=new_id("citation"),
+            evidence_id=evidence.id,
+            label=citation.label or f"USER-{len(project_citations) + index}",
+            excerpt=citation.excerpt,
+            location=citation.location,
+        )
+        for index, citation in enumerate(request.citations, start=1)
+    ]
+
+    try:
+        evidence = store.create("evidence", evidence)
+        citations = [store.create("citations", citation) for citation in citations]
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
+
+    store.create(
+        "activity_events",
+        ActivityEvent(project_id=project.id, event_type=ActivityEventType.EVIDENCE_ATTACHED, message=f"Added user evidence for {request.desk.value} desk."),
+    )
+    return CreateEvidenceResponse(evidence=evidence, citations=citations)
+
+
 @router.get("/{project_id}/citations", response_model=list[EvidenceCitation])
 def list_project_citations(project_id: str, store: StoreDep) -> list[EvidenceCitation]:
     _get_project_or_404(store, project_id)
-    evidence_ids = {item.id for item in store.list("evidence") if item.project_id == project_id}
-    return [citation for citation in store.list("citations") if citation.evidence_id in evidence_ids]
+    return _project_citations(store, project_id)
 
 
 @router.post("/{project_id}/run-demo-workflow", response_model=DemoWorkflowResponse)
@@ -143,3 +183,8 @@ def _get_project_or_404(store: JsonStore, project_id: str) -> ResearchProject:
     if project is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Project not found.")
     return project
+
+
+def _project_citations(store: JsonStore, project_id: str) -> list[EvidenceCitation]:
+    evidence_ids = {item.id for item in store.list("evidence") if item.project_id == project_id}
+    return [citation for citation in store.list("citations") if citation.evidence_id in evidence_ids]

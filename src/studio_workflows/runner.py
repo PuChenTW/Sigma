@@ -1,9 +1,11 @@
 from dataclasses import dataclass
 from typing import Any, Protocol
 
+from studio_domain import ensure_project_citations_resolve
 from studio_schemas import (
     ActivityEvent,
     ActivityEventType,
+    Desk,
     Evidence,
     EvidenceCitation,
     ProjectStatus,
@@ -67,13 +69,21 @@ def run_demo_workflow(store: WorkflowStore, project_id: str) -> DemoWorkflowResu
             _create_event(store, project.id, task.id, ActivityEventType.TASK_FAILED, f"No evidence fixture found for {task.desk.value} desk.")
             raise WorkflowError(f"missing evidence for {task.desk.value} desk")
 
-        artifact = _create_if_missing(store, "artifacts", generate_artifact(task, desk_evidence, citations))
+        artifact = generate_artifact(task, desk_evidence, citations)
+        _ensure_project_citations(store, project.id, artifact.citation_ids)
+        artifact = _create_if_missing(store, "artifacts", artifact)
+        _ensure_project_citations(store, project.id, artifact.citation_ids)
         artifacts.append(artifact)
         _create_event(store, project.id, task.id, ActivityEventType.ARTIFACT_CREATED, f"Created artifact for {task.desk.value} desk.")
         store.update("tasks", task.id, {"status": TaskStatus.COMPLETED, "updated_at": utc_now()})
         _create_event(store, project.id, task.id, ActivityEventType.TASK_COMPLETED, f"Completed {task.desk.value} desk task.")
 
-    thesis = _create_if_missing(store, "theses", synthesize_thesis(project, artifacts, citations))
+    thesis = synthesize_thesis(project, artifacts, citations)
+    _ensure_project_citations(store, project.id, thesis.citation_ids)
+    _ensure_project_citations(store, project.id, thesis.candidate_asset.citation_ids)
+    thesis = _create_if_missing(store, "theses", thesis)
+    _ensure_project_citations(store, project.id, thesis.citation_ids)
+    _ensure_project_citations(store, project.id, thesis.candidate_asset.citation_ids)
     _create_event(store, project.id, None, ActivityEventType.THESIS_CREATED, "Created version 1 thesis.")
     project = store.update("projects", project.id, {"status": ProjectStatus.COMPLETED, "updated_at": utc_now()})
 
@@ -101,11 +111,41 @@ def _ensure_tasks(store: WorkflowStore, project: ResearchProject) -> list[Resear
 
 
 def _ensure_evidence_bundle(store: WorkflowStore, project: ResearchProject) -> tuple[list[Evidence], list[EvidenceCitation]]:
+    existing_evidence = _project_evidence(store, project.id)
+    existing_citations = _project_citations(store, project.id)
+    existing_citations_by_evidence_id = _citations_by_evidence_id(existing_citations)
     bundle = load_smr_evidence_bundle(project)
-    evidence = [_create_if_missing(store, "evidence", item) for item in bundle.evidence]
-    citations = [_create_if_missing(store, "citations", citation) for citation in bundle.citations]
-    _create_event(store, project.id, None, ActivityEventType.EVIDENCE_ATTACHED, "Attached curated SMR evidence fixtures.")
-    return evidence, citations
+    fixture_by_desk = {item.metadata.get("desk"): item for item in bundle.evidence}
+    effective_evidence: list[Evidence] = []
+    fixture_desks: list[str] = []
+
+    for desk in Desk:
+        user_evidence = [
+            item
+            for item in existing_evidence
+            if item.metadata.get("origin") == "user" and item.metadata.get("desk") == desk.value and existing_citations_by_evidence_id.get(item.id)
+        ]
+        if user_evidence:
+            effective_evidence.extend(user_evidence)
+            continue
+
+        fixture = fixture_by_desk.get(desk.value)
+        if fixture is None:
+            continue
+        effective_evidence.append(_create_if_missing(store, "evidence", fixture))
+        for citation in bundle.citations:
+            if citation.evidence_id == fixture.id:
+                _create_if_missing(store, "citations", citation)
+        fixture_desks.append(desk.value)
+
+    if fixture_desks:
+        formatted = ", ".join(fixture_desks)
+        _create_event(store, project.id, None, ActivityEventType.EVIDENCE_ATTACHED, f"Attached curated SMR evidence fixtures for {formatted} desks.")
+
+    effective_evidence_ids = {item.id for item in effective_evidence}
+    citations = [citation for citation in _project_citations(store, project.id) if citation.evidence_id in effective_evidence_ids]
+    ensure_project_citations_resolve(project.id, [citation.id for citation in citations], _project_evidence(store, project.id), store.list("citations"))
+    return effective_evidence, citations
 
 
 def _create_if_missing(store: WorkflowStore, table: str, record):
@@ -133,6 +173,17 @@ def _project_evidence(store: WorkflowStore, project_id: str) -> list[Evidence]:
 def _project_citations(store: WorkflowStore, project_id: str) -> list[EvidenceCitation]:
     evidence_ids = {item.id for item in _project_evidence(store, project_id)}
     return [citation for citation in store.list("citations") if citation.evidence_id in evidence_ids]
+
+
+def _citations_by_evidence_id(citations: list[EvidenceCitation]) -> dict[str, list[EvidenceCitation]]:
+    citations_by_evidence_id: dict[str, list[EvidenceCitation]] = {}
+    for citation in citations:
+        citations_by_evidence_id.setdefault(citation.evidence_id, []).append(citation)
+    return citations_by_evidence_id
+
+
+def _ensure_project_citations(store: WorkflowStore, project_id: str, citation_ids: list[str]) -> None:
+    ensure_project_citations_resolve(project_id, citation_ids, _project_evidence(store, project_id), store.list("citations"))
 
 
 def _project_artifacts(store: WorkflowStore, project_id: str) -> list[ResearchArtifact]:

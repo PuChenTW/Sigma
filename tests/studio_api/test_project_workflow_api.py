@@ -53,6 +53,111 @@ def test_create_project_rejects_empty_topic(client: TestClient) -> None:
     assert response.status_code == 422
 
 
+def test_create_project_evidence_supports_note_and_article(client: TestClient) -> None:
+    project = client.post("/research-projects", json={"topic": "SMR evidence workbench"}).json()
+
+    note_response = client.post(
+        f"/research-projects/{project['id']}/evidence",
+        json={
+            "source_type": "note",
+            "desk": "industry",
+            "title": "Customer demand note",
+            "summary": "A utility buyer needs reliable clean power capacity.",
+            "citations": [{"excerpt": "We need firm clean power by 2030.", "location": "manual note"}],
+        },
+    )
+    article_response = client.post(
+        f"/research-projects/{project['id']}/evidence",
+        json={
+            "source_type": "article",
+            "desk": "macro_policy",
+            "title": "Policy update",
+            "url": "https://example.com/policy-update",
+            "summary": "A policy article explains support for advanced nuclear development.",
+            "citations": [{"label": "POLICY-NOTE", "excerpt": "Policy support remains constructive.", "location": "paragraph 2"}],
+        },
+    )
+
+    assert note_response.status_code == 201
+    assert article_response.status_code == 201
+
+    note = note_response.json()
+    article = article_response.json()
+    assert note["evidence"]["project_id"] == project["id"]
+    assert note["evidence"]["source_type"] == "note"
+    assert note["evidence"]["metadata"] == {"desk": "industry", "origin": "user"}
+    assert note["citations"][0]["label"] == "USER-1"
+    assert article["evidence"]["source_type"] == "article"
+    assert article["evidence"]["url"] == "https://example.com/policy-update"
+    assert article["citations"][0]["label"] == "POLICY-NOTE"
+
+    evidence = client.get(f"/research-projects/{project['id']}/evidence").json()
+    citations = client.get(f"/research-projects/{project['id']}/citations").json()
+    activity_events = client.get(f"/research-projects/{project['id']}/activity-events").json()
+
+    assert {item["id"] for item in evidence} == {note["evidence"]["id"], article["evidence"]["id"]}
+    assert {citation["id"] for citation in citations} == {note["citations"][0]["id"], article["citations"][0]["id"]}
+    assert any(event["message"] == "Added user evidence for industry desk." for event in activity_events)
+    assert any(event["message"] == "Added user evidence for macro_policy desk." for event in activity_events)
+
+
+def test_create_project_evidence_rejects_missing_project(client: TestClient) -> None:
+    response = client.post(
+        "/research-projects/project_missing/evidence",
+        json={
+            "source_type": "note",
+            "desk": "industry",
+            "title": "Customer demand note",
+            "summary": "A utility buyer needs reliable clean power capacity.",
+            "citations": [{"excerpt": "We need firm clean power by 2030.", "location": "manual note"}],
+        },
+    )
+
+    assert response.status_code == 404
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("source_type", "fixture"),
+        ("desk", "quant"),
+        ("summary", ""),
+    ],
+)
+def test_create_project_evidence_rejects_invalid_evidence_fields(client: TestClient, field: str, value: str) -> None:
+    project = client.post("/research-projects", json={"topic": "SMR evidence workbench"}).json()
+    payload = {
+        "source_type": "note",
+        "desk": "industry",
+        "title": "Customer demand note",
+        "summary": "A utility buyer needs reliable clean power capacity.",
+        "citations": [{"excerpt": "We need firm clean power by 2030.", "location": "manual note"}],
+    }
+    payload[field] = value
+
+    response = client.post(f"/research-projects/{project['id']}/evidence", json=payload)
+
+    assert response.status_code == 422
+
+
+@pytest.mark.parametrize("citation", [{"excerpt": "", "location": "manual note"}, {"excerpt": "Quote", "location": ""}])
+def test_create_project_evidence_rejects_invalid_citation_fields(client: TestClient, citation: dict[str, str]) -> None:
+    project = client.post("/research-projects", json={"topic": "SMR evidence workbench"}).json()
+
+    response = client.post(
+        f"/research-projects/{project['id']}/evidence",
+        json={
+            "source_type": "note",
+            "desk": "industry",
+            "title": "Customer demand note",
+            "summary": "A utility buyer needs reliable clean power capacity.",
+            "citations": [citation],
+        },
+    )
+
+    assert response.status_code == 422
+
+
 def test_run_demo_workflow_exposes_artifacts_and_thesis(client: TestClient) -> None:
     project = client.post("/research-projects", json={"topic": "SMR investment opportunity"}).json()
 

@@ -120,9 +120,29 @@ Local JSON persistence defaults to `.local/studio-api.json`. Override it with `S
 
 The frontend reads the API base URL from `NEXT_PUBLIC_API_BASE_URL`; `make web` points it at the local FastAPI server.
 
+## Evidence Workbench Manual Smoke Test
+
+Start the local API and web UI in separate terminals:
+
+```bash
+make api
+make web
+```
+
+Then open the web UI and verify this path:
+
+1. Create a project with an SMR-related topic.
+2. In Evidence workbench, add one `Article` or `Note` for the `Industry` desk with title, summary, citation excerpt, and location.
+3. Confirm the evidence library shows the new source and citation preview.
+4. Click `Run research`.
+5. In `Artifacts and citations`, confirm the industry artifact citation shows the user-added evidence title, summary, and citation excerpt.
+
+Existing committee approve/reject can be smoke-tested after this by clicking `Committee`, entering an optional decision note, and approving or rejecting the proposal. That path is not required to validate Evidence Workbench scope.
+
 ## MVP Limitations
 
-- Research output uses deterministic SMR fixtures; there is no live source discovery, market data, or LLM dependency in the demo path.
+- Research output is still deterministic. User evidence affects citation selection, while artifact and thesis prose are not yet generated from live source analysis.
+- Evidence entry is currently manual. There is no server-side URL fetching, article extraction, PDF parsing, transcript ingestion, RSS discovery, market data, or LLM dependency in the demo path.
 - The Trading Committee is a stubbed boundary that returns a structured proposal; it does not run TradingAgents.
 - Approval or rejection records an investment decision only. It does not create trades, positions, or brokerage side effects.
 - Local JSON persistence is for development and demo use, not production deployment.

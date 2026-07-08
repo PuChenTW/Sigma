@@ -83,7 +83,7 @@ def synthesize_thesis(project: ResearchProject, artifacts: Sequence[ResearchArti
         ],
         assumptions=[
             "The user wants topic-driven research converted into one reviewable investment candidate.",
-            "The MVP demo uses curated offline evidence rather than live market data.",
+            "The deterministic workflow uses project evidence when available, with curated fixtures only as offline fallback for missing desk coverage.",
         ],
         catalysts=[
             "Customer announcements, licensing progress, project finance milestones, and supply-chain validation.",

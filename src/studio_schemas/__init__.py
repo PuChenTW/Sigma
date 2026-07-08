@@ -1,4 +1,14 @@
-from studio_schemas.api import CreateResearchProjectRequest, DecisionRequest, DemoWorkflowResponse, HealthResponse, InvestmentDecisionResponse, NotImplementedResponse
+from studio_schemas.api import (
+    CreateCitationInput,
+    CreateEvidenceRequest,
+    CreateEvidenceResponse,
+    CreateResearchProjectRequest,
+    DecisionRequest,
+    DemoWorkflowResponse,
+    HealthResponse,
+    InvestmentDecisionResponse,
+    NotImplementedResponse,
+)
 from studio_schemas.enums import (
     ActivityEventType,
     DecisionType,
@@ -31,6 +41,9 @@ __all__ = [
     "ActivityEvent",
     "ActivityEventType",
     "CandidateAsset",
+    "CreateCitationInput",
+    "CreateEvidenceRequest",
+    "CreateEvidenceResponse",
     "CreateResearchProjectRequest",
     "DecisionProposal",
     "DecisionRequest",

@@ -30,6 +30,8 @@ body {
 }
 
 button,
+input,
+select,
 textarea {
   font: inherit;
 }
@@ -56,6 +58,12 @@ button:disabled {
 textarea {
   width: 100%;
   resize: vertical;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 10px 12px;
@@ -64,6 +72,8 @@ textarea {
 }
 
 textarea:focus,
+input:focus,
+select:focus,
 button:focus-visible {
   outline: 3px solid #9dd9d2;
   outline-offset: 2px;
@@ -189,9 +199,10 @@ button:focus-visible {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(320px, 0.9fr);
   grid-template-areas:
-    "tasks activity"
-    "thesis proposal"
-    "artifacts proposal";
+    "tasks evidence"
+    "thesis evidence"
+    "artifacts proposal"
+    "activity proposal";
   gap: 14px;
 }
 
@@ -209,6 +220,10 @@ button:focus-visible {
 
 .thesis-panel {
   grid-area: thesis;
+}
+
+.evidence-panel {
+  grid-area: evidence;
 }
 
 .proposal-panel,
@@ -248,9 +263,82 @@ button:focus-visible {
 .thesis-block,
 .proposal-block,
 .artifact-list,
+.evidence-form,
+.evidence-library,
 .activity-list {
   display: grid;
   gap: 12px;
+}
+
+.evidence-form {
+  margin-bottom: 16px;
+}
+
+.evidence-form label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.evidence-item {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px;
+  background: #fbfcfc;
+}
+
+.evidence-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.evidence-heading h3 {
+  margin: 0;
+  font-size: 0.96rem;
+  overflow-wrap: anywhere;
+}
+
+.evidence-heading span,
+.evidence-item p,
+.citation-preview span {
+  color: var(--muted);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.evidence-heading span {
+  display: inline-block;
+  margin-top: 3px;
+  font-size: 0.78rem;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+.evidence-item p {
+  margin: 0;
+}
+
+.citation-preview {
+  display: grid;
+  gap: 4px;
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+}
+
+.citation-preview strong {
+  color: var(--blue);
 }
 
 .task-row {
@@ -358,6 +446,10 @@ button:focus-visible {
 .citation-row span {
   color: var(--text);
   font-weight: 700;
+}
+
+.citation-summary {
+  color: var(--text) !important;
 }
 
 .asset-strip,
@@ -510,6 +602,7 @@ button:focus-visible {
     grid-template-columns: 1fr;
     grid-template-areas:
       "tasks"
+      "evidence"
       "thesis"
       "artifacts"
       "proposal"
@@ -548,7 +641,8 @@ button:focus-visible {
 
   .proposal-facts,
   .task-row,
-  .project-row {
+  .project-row,
+  .field-row {
     grid-template-columns: 1fr;
   }
 

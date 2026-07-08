@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from studio_api.dependencies import get_store
 from studio_api.storage import JsonStore
-from studio_domain import ensure_citations_resolve
-from studio_schemas import ActivityEvent, ActivityEventType, DecisionProposal, EvidenceCitation, ResearchProject, Thesis
+from studio_domain import ensure_project_citations_resolve
+from studio_schemas import ActivityEvent, ActivityEventType, DecisionProposal, Evidence, ResearchProject, Thesis
 from studio_workflows import evaluate_committee
 
 router = APIRouter(prefix="/research-projects/{project_id}/committee", tags=["committee"])
@@ -19,7 +19,7 @@ def evaluate_project(project_id: str, store: StoreDep) -> DecisionProposal:
 
     try:
         proposal = evaluate_committee(project, thesis)
-        ensure_citations_resolve(proposal.citation_ids, _project_citations(store, project.id))
+        ensure_project_citations_resolve(project.id, proposal.citation_ids, _project_evidence(store, project.id), store.list("citations"))
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
 
@@ -49,6 +49,5 @@ def _get_project_thesis_or_409(store: JsonStore, project_id: str) -> Thesis:
     return sorted(theses, key=lambda thesis: thesis.version)[-1]
 
 
-def _project_citations(store: JsonStore, project_id: str) -> list[EvidenceCitation]:
-    evidence_ids = {item.id for item in store.list("evidence") if item.project_id == project_id}
-    return [citation for citation in store.list("citations") if citation.evidence_id in evidence_ids]
+def _project_evidence(store: JsonStore, project_id: str) -> list[Evidence]:
+    return [item for item in store.list("evidence") if item.project_id == project_id]

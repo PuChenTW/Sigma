@@ -29,7 +29,7 @@ src/
   studio_api/         FastAPI app, routes, dependencies, local storage
   studio_domain/      domain rules and lifecycle checks
   studio_schemas/     API, persistence, and workflow schemas
-  studio_workflows/   deterministic planning, fixtures, artifacts, thesis, committee stub
+  studio_workflows/   deterministic planning, evidence selection, artifacts, thesis, committee stub
   source_tools/       reusable RSS/media/transcript/LLM helpers
 
 frontend/             thin Next.js MVP workflow UI and Playwright tests
@@ -49,7 +49,7 @@ flowchart TD
   API --> Store["Local Persistence"]
   API --> Runner["Research Workflow Runner"]
   Runner --> Planner["Fixed Desk Templates"]
-  Runner --> Evidence["Evidence Fixtures"]
+  Runner --> Evidence["Project Evidence / Fixture Fallback"]
   Runner --> Artifacts["Artifact Generator"]
   Artifacts --> Thesis["Thesis Synthesizer"]
   Thesis --> Committee["Trading Committee Interface"]
@@ -60,11 +60,11 @@ flowchart TD
 
 ## Core Components
 
-- `frontend`: topic submission, project status, thesis review, proposal review, and approve/reject UI.
+- `frontend`: topic submission, project status, manual Evidence Workbench, thesis review, proposal review, and approve/reject UI.
 - `src/studio_api`: route handlers, request validation, orchestration entrypoints, response shaping, and local persistence access.
 - `src/studio_schemas`: Pydantic contracts shared by API, persistence, and workflow code.
-- `src/studio_domain`: small domain rules such as proposal decision transitions.
-- `src/studio_workflows`: deterministic task planning, curated SMR fixtures, artifact generation, thesis synthesis, and committee proposal stub.
+- `src/studio_domain`: small domain rules such as proposal decision transitions and project-scoped citation ownership.
+- `src/studio_workflows`: deterministic task planning, project evidence selection with curated SMR fixture fallback, artifact generation, thesis synthesis, and committee proposal stub.
 - `src/source_tools`: reusable infrastructure for RSS, media/transcript extraction, ASR wiring, and source-grounded LLM helpers.
 
 ## Domain Model
@@ -129,11 +129,13 @@ Current workflow functions are intentionally concrete:
 
 ```text
 plan_tasks(project) -> list[ResearchTask]
-load_evidence(project) -> list[Evidence]
+select_project_evidence(project) -> list[Evidence]
 generate_artifact(task, evidence) -> ResearchArtifact
 synthesize_thesis(project, artifacts) -> Thesis
 evaluate_committee(thesis, candidate_asset) -> DecisionProposal
 ```
+
+The current evidence policy is deliberately simple: cited user evidence wins for its desk, and curated SMR fixtures fill only desks without cited user evidence. Manual evidence entry proves source-grounded traceability before the product adds URL, document, transcript, or RSS ingestion.
 
 Add autonomous planning only after there are enough real task patterns to justify it.
 
@@ -212,6 +214,7 @@ GET /research-projects/{project_id}
 GET /research-projects/{project_id}/tasks
 GET /research-projects/{project_id}/activity-events
 GET /research-projects/{project_id}/evidence
+POST /research-projects/{project_id}/evidence
 GET /research-projects/{project_id}/citations
 GET /research-projects/{project_id}/artifacts
 GET /research-projects/{project_id}/thesis

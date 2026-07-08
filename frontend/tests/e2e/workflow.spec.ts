@@ -15,7 +15,7 @@ test("runs the SMR research workflow through approval with traceability and refr
   await expect(page.getByText("OKLO", { exact: true })).toBeVisible();
   await expect(page.getByText("completed").first()).toBeVisible();
   await expect(page.getByText("Artifacts and citations")).toBeVisible();
-  await expect(page.getByText("IND-1")).toBeVisible();
+  await expect(page.locator(".artifacts-panel").getByText("IND-1")).toBeVisible();
   await expect(page.getByText("SMR demo evidence: industry demand").first()).toBeVisible();
 
   await page.getByRole("button", { name: "Committee" }).click();
@@ -34,7 +34,7 @@ test("runs the SMR research workflow through approval with traceability and refr
   await page.reload();
   await expect(page.getByRole("heading", { name: "SMR approval path deterministic demo" })).toBeVisible();
   await expect(page.getByText("Decision recorded: approved")).toBeVisible();
-  await expect(page.getByText("IND-1")).toBeVisible();
+  await expect(page.locator(".artifacts-panel").getByText("IND-1")).toBeVisible();
 
   await page.getByLabel("Topic").fill("Second project without proposal");
   await page.getByRole("button", { name: "Create project" }).click();
@@ -44,6 +44,35 @@ test("runs the SMR research workflow through approval with traceability and refr
 
   await page.getByRole("button", { name: /SMR approval path deterministic demo/ }).click();
   await expect(page.getByText("Decision recorded: approved")).toBeVisible();
+});
+
+test("uses added evidence in the research artifact citation trace", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByLabel("Topic").fill("SMR evidence workbench traceability");
+  await page.getByRole("button", { name: "Create project" }).click();
+  await expect(page.getByRole("heading", { name: "SMR evidence workbench traceability" })).toBeVisible();
+
+  await page.getByLabel("Source").selectOption("article");
+  await page.getByLabel("Desk").selectOption("industry");
+  await page.getByLabel("Title").fill("User article: hyperscale power demand");
+  await page.getByLabel("URL").fill("https://example.com/hyperscale-power-demand");
+  await page.getByLabel("Summary").fill("Hyperscale buyers are looking for reliable clean power that could support advanced nuclear demand.");
+  await page.getByLabel("Citation label").fill("USER-DEMAND");
+  await page.getByLabel("Location").fill("paragraph 7");
+  await page.getByLabel("Excerpt").fill("Data center power buyers need firm clean electricity before 2030.");
+  await page.getByRole("button", { name: "Add evidence" }).click();
+
+  await expect(page.getByText("User article: hyperscale power demand")).toBeVisible();
+  await expect(page.getByText("USER-DEMAND")).toBeVisible();
+  await expect(page.getByText("Added user evidence for industry desk.")).toBeVisible();
+
+  await page.getByRole("button", { name: "Run research" }).click();
+
+  const artifactsPanel = page.locator(".artifacts-panel");
+  await expect(artifactsPanel.getByText("User article: hyperscale power demand")).toBeVisible();
+  await expect(artifactsPanel.getByText("Hyperscale buyers are looking for reliable clean power that could support advanced nuclear demand.")).toBeVisible();
+  await expect(artifactsPanel.getByText("Data center power buyers need firm clean electricity before 2030.")).toBeVisible();
 });
 
 test("runs the reject decision path", async ({ page }) => {

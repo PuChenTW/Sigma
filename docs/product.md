@@ -81,6 +81,7 @@ Must have:
   - Fundamental / company candidate
 - Task statuses and minimal activity timeline.
 - Curated SMR evidence set.
+- Manual Evidence Workbench for user-provided notes/articles as a first source-grounding loop.
 - Evidence metadata and stable citation IDs.
 - One cited research artifact per desk.
 - One synthesized thesis.
@@ -110,6 +111,7 @@ Do not include in the first MVP:
 - Multi-user collaboration.
 - Production-grade authentication or permissions.
 - General-purpose web crawling or open-ended source discovery.
+- Automated URL, PDF, transcript, or RSS ingestion.
 - Deep TradingAgents integration.
 - Autonomous multi-agent orchestration.
 - Custom research desks or workflow builder.
@@ -134,7 +136,7 @@ Primary user journey:
 3. System creates a `ResearchProject`.
 4. System creates fixed `ResearchTask` records for Industry, Macro/Policy, and Fundamental research.
 5. User sees task status and meaningful activity events.
-6. System attaches curated evidence to the project and tasks.
+6. System uses project evidence when the user has supplied cited notes/articles; otherwise it attaches curated fallback evidence for desks without user evidence.
 7. Each task produces a cited `ResearchArtifact`.
 8. System synthesizes one `Thesis`.
 9. Thesis detail shows the claim, evidence for, risks, assumptions, catalysts, invalidation conditions, horizon, confidence, and candidate asset rationale.
@@ -147,6 +149,7 @@ Primary user journey:
 ## Success Criteria
 
 - A user can complete the full SMR demo through the UI.
+- A user can add cited evidence and see that evidence appear in artifact citation traceability.
 - The demo works without live network or LLM dependencies.
 - Every thesis and proposal claim shown in the demo has citation lineage.
 - Approve/reject creates a durable decision record.
@@ -158,6 +161,7 @@ Primary user journey:
 After the MVP works, the most useful product directions are:
 
 - Real source ingestion from URLs, RSS, transcripts, PDFs, uploaded notes, and market data.
+- Assisted evidence review, where the system proposes source summaries and citation excerpts and the user approves or corrects them.
 - Optional schema-validated LLM synthesis behind deterministic fallbacks.
 - Thesis versioning, comparison, and challenge workflows.
 - Configurable research desks after fixed desks prove useful.
