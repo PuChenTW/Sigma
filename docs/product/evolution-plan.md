@@ -18,19 +18,33 @@ Topic -> Research Project -> Evidence -> Thesis -> Decision Proposal -> User Dec
 Dashboard -> Research Team -> Research Library -> Decision Desk -> Positions -> Outcomes
 ```
 
-Both are compatible. The MVP proves the trust chain from topic to decision. The prototype shows the eventual workspace once there are enough projects, theses, proposals, and decisions to manage.
+Both are compatible, but the next product step should preserve the original product idea: the user manages an AI research team. The MVP proves one trust chain from topic to decision. The next phase should expose research desk ownership, task status, blockers, activity, and thesis challenge loops before expanding into a broad evidence-approval workflow.
+
+The prototype intentionally looks like a complete investment command center. Implementation should translate that surface into durable lifecycle milestones:
+
+```text
+Research operations first
+  -> thesis lifecycle
+  -> decision queue
+  -> manual / paper position outcome loop
+  -> aggregate dashboard
+```
+
+Do not treat the prototype's visible portfolio metrics, active positions, or "approve and execute" language as permission to skip the research operating system or to create brokerage side effects. Those screens become real only when the underlying records exist.
 
 ## Product Capability Map
 
 | Prototype capability | Product capability | Current state | Intended phase | Boundary to protect |
 |---|---|---:|---:|---|
-| Assign research task | Create research project and tasks from open-ended topic | MVP exists with fixed desks | P0/P2 | Research desk is a task template, not a runtime agent |
-| Research team status | Show task progress, blockers, and activity | Minimal activity events | P2 | Role != agent instance |
-| Research report list | Browse durable theses and artifacts across projects | Project-local thesis view | P2 | Report != Thesis |
-| Thesis detail | Review thesis claims, evidence, risks, catalysts, invalidation | MVP thesis exists | P1/P2 | Every claim needs citation lineage |
+| Assign research task | Create research project and tasks from open-ended topic | MVP exists with fixed desks | P0/P1 | Research desk is a task template, not a runtime agent |
+| Chief of Staff / CIO Router | Convert free-form topic into project objective and desk work | Not implemented | P1 | Router != autonomous decision maker |
+| Research team status | Show task progress, blockers, dependencies, and activity | Minimal activity events | P1 | Role != runtime agent instance |
+| Research report list | Browse durable theses and artifacts across projects | Project-local thesis view | P1/P2 | Report != Thesis |
+| Thesis detail | Review thesis claims, evidence, risks, catalysts, invalidation | MVP thesis exists | P2 | Every claim needs citation lineage |
+| Thesis challenge | Ask follow-ups, challenge assumptions, request more research | Not implemented | P2 | User challenge != investment decision |
 | Decision desk | Review multiple committee proposals awaiting user action | Single proposal flow | P3 | Proposal != approved decision |
 | Approve / reject proposal | Record durable user decision | MVP exists | P0/P3 | User keeps final control |
-| Execute proposal | Record an execution intent or paper execution | Not implemented | P4 | Approval != brokerage trade |
+| Execute proposal | Record a user-entered execution intent or paper execution | Not implemented | P4 | Approval != brokerage trade |
 | Active positions | Track approved thesis exposure and outcome | Explicitly out of MVP | P4 | Position tracking is downstream of decision quality |
 | Position updates | Record current price, status, notes, partial exit | Not implemented | P4 | Market data can be manual before automated |
 | Portfolio KPIs | Summarize exposure, PnL, active positions, pending decisions | Prototype only | P5 | Dashboard aggregates domain records; it does not own them |
@@ -52,42 +66,50 @@ Already covered by the current MVP:
 
 Do not expand dashboards, portfolio state, or custom agents in P0.
 
-### P1 - Real Evidence Loop
+### P1 - Research Team Workspace
 
-Goal: replace the least realistic part of the MVP without changing the decision boundary.
+Goal: make the product feel like managing an AI research team before it becomes a trading dashboard or data-labeling workflow.
 
 Ship:
 
-- URL/article ingestion.
-- Uploaded note or document ingestion.
-- Evidence review queue where user-approved excerpts become citations.
-- Artifact and thesis generation grounded only in approved citations.
-- Deterministic fallback and tests for every generated path.
+- Chief of Staff / CIO Router that turns a free-form topic into a project objective and desk-scoped tasks.
+- Research team board with desks, task ownership, priority, status, blockers, dependencies, and activity.
+- Project navigation and persisted project switching.
+- Desk artifact summaries that show what each desk produced and what evidence or assumptions support it.
+- Minimal thesis challenge/request-more-research action that creates follow-up desk work or records a challenge note.
+- Deterministic planning and artifact generation as the testable baseline; no requirement for live agent orchestration yet.
+
+The P1 UI may borrow the prototype's dashboard feel, but the first screen should center active research, team status, task queue, blockers, and pending user interventions. Portfolio KPIs and position P&L should remain absent or clearly mocked until P4/P5 records exist.
 
 Exit criteria:
 
-- A user can add at least one real source and see its approved citation used in a thesis.
-- Generated artifacts cannot cite missing, foreign, or unapproved evidence.
+- A user can submit a broad research topic and see it become desk-level work without first choosing a ticker.
+- A user can inspect which desks are queued, running, blocked, or done, and can drill into each desk's artifact.
+- A user can challenge or request more research on a thesis and see the follow-up captured as durable project state.
 - The existing committee proposal contract still works unchanged.
 
 Defer:
 
 - Portfolio dashboard.
 - Position management.
-- Autonomous source discovery.
+- Execution reporting.
+- Live autonomous source discovery.
+- Broad source ingestion and document parsing.
+- Per-excerpt evidence approval as a primary user workflow.
 - Custom desk builder.
 
-### P2 - Research Workspace
+### P2 - Thesis Lifecycle And Evidence Traceability
 
-Goal: make the product feel like a research operating system before it becomes a trading dashboard.
+Goal: make thesis review trustworthy and iterative once the user can already manage research work.
 
 Ship:
 
-- Project navigation and persisted project switching.
-- Research task queue with priorities, statuses, blockers, and activity.
 - Thesis library across projects.
 - Thesis detail with evidence, assumptions, catalysts, risks, and invalidation conditions.
 - Thesis challenge/refinement workflow.
+- URL/article and note/document source intake where the research workspace needs it.
+- Evidence review for cited excerpts and high-impact claims.
+- Artifact and thesis generation grounded in project evidence or explicit assumptions.
 - Optional additional fixed desks after repeated need is proven.
 
 Exit criteria:
@@ -95,6 +117,7 @@ Exit criteria:
 - A user can manage multiple research projects without losing lineage.
 - Every thesis in the library links back to artifacts, citations, and project context.
 - Challenge/refinement produces a new thesis version or explicit rejection reason.
+- Generated artifacts and theses cannot cite missing, foreign, or unreviewed evidence where explicit review is required.
 
 Defer:
 
@@ -135,7 +158,7 @@ Goal: close the loop from approved decision to monitored outcome without becomin
 Ship:
 
 - `InvestmentPosition` or equivalent position record created only from an approved decision or explicit manual entry.
-- Manual execution details: fill price, size, notes, status.
+- Manual or paper execution details entered by the user: fill price, size, notes, status.
 - Position update records: current price, partial exit, closed, thesis still valid or broken.
 - Risk controls tied back to proposal: stop, target, sizing, invalidation.
 - Outcome review linked to original thesis.
@@ -173,24 +196,26 @@ Exit criteria:
 
 ## Planning Rules
 
-- Ship one capability axis at a time: evidence, research workspace, decision queue, outcome loop, dashboard.
+- Ship one capability axis at a time: research team workspace, thesis/evidence trust, decision queue, outcome loop, dashboard.
 - A phase can start only when the previous phase has a working end-to-end path and tests.
 - Do not introduce a new domain entity only for a screen. Add it when the product has a durable lifecycle to track.
 - Keep deterministic fallbacks until the equivalent live/LLM path has contract tests.
 - Use Playwright for every meaningful frontend workflow change.
 - Keep `frontend_prototype/` as reference material. Production UI should reuse product concepts, not prototype runtime code.
+- Do not promote TradingAgents integration ahead of P1/P2 just because the attached context discusses committee validation. TradingAgents is valuable after the Studio has research and thesis records worth sending to a committee.
 
 ## Recommended Next Milestone
 
-The next milestone should be P1:
+The next milestone should be P1 Research Team Workspace:
 
 ```text
-Real evidence ingestion
-  -> evidence review queue
-  -> cited artifact generation
-  -> thesis validation
+Free-form topic
+  -> Chief of Staff / CIO Router
+  -> desk-scoped research tasks
+  -> team status / blockers / activity
+  -> desk artifacts
+  -> thesis challenge / request-more-research
   -> same committee proposal contract
-  -> same decision UI path
 ```
 
-This narrows the gap with the prototype where trust matters most: the user can rely on the research before the product adds more screens for decisions, positions, and dashboards.
+This narrows the gap with the original product concept where the user operates an AI research team. Source ingestion and evidence approval remain important, but they should support thesis review and desk work rather than become the main user-facing milestone.

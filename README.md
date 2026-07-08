@@ -15,6 +15,13 @@ This repository also contains `source_tools`, a reusable tool layer for RSS inge
 - [Architecture](docs/technical/architecture.md)
 - [API design](docs/technical/api.md)
 
+Product direction anchors:
+
+- `frontend_prototype/` shows the mature Studio operating surface.
+- The near-term build target remains Research Team Workspace, not a trading dashboard.
+- Approval records a user decision; manual or paper execution and position tracking come later.
+- TradingAgents belongs behind the committee boundary after research/thesis records are stable.
+
 ## Repository Layout
 
 ```text

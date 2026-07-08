@@ -22,6 +22,8 @@ Next.js UI
 
 The deterministic demo path does not require live network calls, LLM calls, market data, brokerage credentials, or TradingAgents.
 
+The attached product context includes possible future service/package layouts and TradingAgents integration options. Those are planning inputs, not current architecture. The repository should stay concrete and small until product behavior requires a split.
+
 ## Repository Layout
 
 ```text
@@ -41,6 +43,8 @@ docs/
 ```
 
 Do not keep empty `apps/`, `packages/`, `services/`, or `vendor/` scaffold directories. Add concrete modules only when implementation needs them.
+
+Do not create a `vendor/tradingagents` tree, separate committee service, or multi-package workspace until the Studio has stable research, thesis, and proposal contracts that justify that boundary.
 
 ## High-Level Flow
 
@@ -139,22 +143,30 @@ Keep these concepts separate:
 - `Raw Evidence != ResearchArtifact`
 - `Report != Thesis`
 - `Role != Runtime Agent Instance`
+- `Research Desk != TradingAgents Analyst`
+- `Chief of Staff Router != Trading Committee`
 - `Deterministic Computation != LLM Reasoning`
 - `TradingAgents State != Studio Domain Model`
 - `Approval != Trade Execution`
+- `Execution Record != Brokerage Order`
 - `Position != Portfolio Dashboard`
 
 These boundaries should remain true even after adding real orchestration, richer evidence retrieval, or a real Trading Committee engine.
 
 For prototype-aligned expansion, dashboard screens must aggregate durable records. They should not introduce separate dashboard-only state for proposals, positions, P&L, or research status.
 
+Prototype labels such as "execute" should be implemented as user-entered manual or paper records unless a separate product decision introduces brokerage integration.
+
 ## Workflow Boundary
 
-Research desks are task templates in the MVP, not runtime agents.
+Research desks are product roles and task templates in the MVP, not runtime agents. A future runtime agent may execute a desk task, but the durable Studio record is still the `ResearchTask`, its desk, its status, its blockers, its activity, and its output artifacts.
+
+The Chief of Staff / CIO Router belongs to the Studio workflow boundary. It turns a free-form topic into a project objective, desk-scoped tasks, dependencies, and priority. It should not make investment decisions, own thesis history, or pass raw evidence stores into committee state.
 
 Current workflow functions are intentionally concrete:
 
 ```text
+route_topic(project_intent) -> ResearchProject
 plan_tasks(project) -> list[ResearchTask]
 select_project_evidence(project) -> list[Evidence]
 generate_artifact(task, evidence) -> ResearchArtifact
@@ -162,7 +174,7 @@ synthesize_thesis(project, artifacts) -> Thesis
 evaluate_committee(thesis, candidate_asset) -> DecisionProposal
 ```
 
-The current evidence policy is deliberately simple: cited user evidence wins for its desk, and curated SMR fixtures fill only desks without cited user evidence. Manual evidence entry proves source-grounded traceability before the product adds URL, document, transcript, or RSS ingestion.
+The current evidence policy is deliberately simple: cited user evidence wins for its desk, and curated SMR fixtures fill only desks without cited user evidence. Manual evidence entry proves source-grounded traceability before the product adds URL, document, transcript, or RSS ingestion. Evidence review should be introduced as a trust boundary for cited claims and high-impact excerpts, not as the primary product workflow.
 
 Add autonomous planning only after there are enough real task patterns to justify it.
 

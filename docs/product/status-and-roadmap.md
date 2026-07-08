@@ -46,6 +46,7 @@ Implemented areas:
 - The Trading Committee is a stub and does not run TradingAgents.
 - Approval or rejection records an investment decision only. It does not create trades, positions, or brokerage side effects.
 - The UI does not yet match the broader prototype experience in `frontend_prototype/`: there is no dashboard, research report library, multi-topic task queue, decision desk with multiple proposals, position workspace, or execution reporting flow.
+- The product does not yet feel like an AI research team: there is no Chief of Staff / CIO Router, visible desk ownership, task dependency graph, blocker state, or user challenge/refinement loop.
 - Local JSON persistence is for development and demo use, not production deployment.
 - There is no production auth, background job system, deployment story, or observability stack.
 - The UI is a workflow proof, not a full dashboard or design system.
@@ -89,13 +90,18 @@ Local API JSON persistence defaults to `.local/studio-api.json`. Override it wit
 
 The next step should deliberately choose one axis of progress instead of expanding everything at once. `frontend_prototype/` should guide the target experience, but implementation should move through the phase gates in `docs/product/evolution-plan.md`.
 
+The product-facing priority is the research operating system experience: free-form topic intake, Chief of Staff planning, desk-level task ownership, task status/blockers/activity, and a thesis challenge loop. Evidence ingestion and citation approval are important trust infrastructure, but they should support that workflow rather than become the user's main job.
+
+The prototype's trading dashboard, active positions, and execution flows are later-stage expressions of the same product, not the immediate build target. They should not pull the roadmap toward auto-trading, portfolio accounting, or a ticker-first workflow. Near-term UI work should make the Studio feel like a research team workspace before it feels like a portfolio terminal.
+
 Recommended order:
 
-1. Improve research realism with real source ingestion and evidence review.
-2. Add the research workspace shell once it can display durable project, task, thesis, citation, proposal, and decision records.
-3. Allow multiple proposals and a richer Decision Desk once thesis/proposal traceability remains solid.
-4. Add paper position tracking after approved decisions have useful lifecycle semantics.
-5. Add market data, portfolio dashboards, durable infrastructure, real committee engines, and production concerns only when the workflow requires them.
+1. Add the research team workspace shell: Chief of Staff topic routing, desk tasks, task statuses, blockers, activity timeline, and project switching.
+2. Add thesis challenge/refinement and richer desk artifacts so the user can steer research before a decision proposal exists.
+3. Improve source intake and evidence traceability where the workspace needs it: URLs, notes, transcripts/PDFs later, cited excerpts, and validation that claims resolve to approved or explicit evidence.
+4. Allow multiple proposals and a richer Decision Desk once thesis/proposal traceability remains solid.
+5. Add user-entered paper/manual position tracking after approved decisions have useful lifecycle semantics.
+6. Add market data, portfolio dashboards, durable infrastructure, real committee engines, and production concerns only when the workflow requires them.
 
 ## Current Product Plan
 
@@ -104,13 +110,30 @@ The detailed phase plan lives in `docs/product/evolution-plan.md`.
 Current stance:
 
 - P0 is implemented as a deterministic local vertical slice.
-- P1, the real evidence loop, is the recommended next milestone.
-- P2 research workspace should follow once there are trustworthy research records to organize.
+- P1 should be corrected to Research Team Workspace: a product-facing milestone that makes the Studio feel like managing an AI research team.
+- Real evidence ingestion and approval should become an enabling trust slice inside or after the workspace milestone, not the whole product-facing P1.
 - P3-P5 should wait until proposal traceability, decision lifecycle, and paper position semantics are stable.
 
 Do not start a later phase only to make the UI look complete. Start it when the earlier phase has a working end-to-end path, focused tests, and clear domain records to aggregate.
 
-## Option A: Improve Research Realism
+## Option A: Build Research Team Workspace
+
+Goal:
+
+- Make the product feel like an AI research operating system instead of a single workflow demo.
+
+Possible work:
+
+- Add a Chief of Staff / CIO Router that turns a free-form topic into a project objective and desk-scoped research tasks.
+- Show a research team board with desks, assigned tasks, statuses, blockers, dependencies, and activity.
+- Expand fixed desks toward the original product model: Industry, Macro, Fundamental, Market Intelligence, Quant / Technical, and Narrative.
+- Add thesis detail actions for challenge, refine, request-more-research, and record why a thesis changed.
+- Keep deterministic task planning/artifact generation as the testable baseline until agentic research is introduced.
+- Preserve source/citation lineage for every artifact and thesis; evidence review is used where a claim needs trust, not as a line-by-line document approval workflow.
+
+This is the highest-value product direction because it closes the biggest gap from the original concept: the user should feel like they are managing a research team, not manually approving extracted snippets.
+
+## Option B: Improve Research Realism And Evidence Traceability
 
 Goal:
 
@@ -119,16 +142,15 @@ Goal:
 Possible work:
 
 - Add URL/article ingestion that extracts title, body text, source metadata, and candidate citation excerpts.
-- Add PDF/uploaded document ingestion with page-aware citation locations.
-- Add RSS/transcript ingestion into project evidence after the URL and document path is stable.
-- Add an evidence review queue so system-proposed summaries and excerpts are approved or corrected before research uses them.
-- Add optional schema-validated LLM artifact generation grounded only in approved evidence.
+- Add uploaded notes/documents, then PDF/transcript ingestion after the simpler source path is stable.
+- Add evidence review for cited excerpts and high-impact claims.
+- Add optional schema-validated LLM artifact generation grounded only in project evidence.
 - Keep deterministic fixtures as test fallback.
 - Preserve validation that generated artifacts and theses cannot cite missing or foreign evidence.
 
-This is the highest-value trust direction and corresponds to P1 of the prototype-aligned roadmap. It should happen before broad workspace, Decision Desk, or position expansion unless the immediate goal is only to improve navigation over already-persisted records.
+Do this as an enabling slice for the research workspace. Avoid making the user's primary flow "approve every excerpt before research can happen."
 
-## Option B: Improve Evidence Storage And Retrieval
+## Option C: Improve Evidence Storage And Retrieval
 
 Goal:
 
@@ -144,7 +166,7 @@ Possible work:
 
 Do this before broad source ingestion becomes too large for local JSON.
 
-## Option C: Integrate TradingAgents Behind Committee Boundary
+## Option D: Integrate TradingAgents Behind Committee Boundary
 
 Goal:
 
@@ -157,9 +179,9 @@ Possible work:
 - Convert TradingAgents output back into `DecisionProposal`.
 - Add contract tests proving Studio objects do not depend on TradingAgents state.
 
-This should happen after the proposal contract is stable.
+This should happen after the proposal contract is stable and after P1/P2 produce durable research tasks, artifacts, theses, and citation context worth evaluating. Do not start with a TradingAgents fork or vendor tree as the main product axis.
 
-## Option D: Productize The Workflow UI
+## Option E: Productize The Workflow UI
 
 Goal:
 
@@ -175,7 +197,7 @@ Possible work:
 
 Use Playwright for every meaningful frontend workflow change.
 
-## Option E: Production Readiness
+## Option F: Production Readiness
 
 Goal:
 
@@ -193,15 +215,16 @@ Do not start here unless deployment is the immediate product need.
 
 ## Near-Term Recommendation
 
-The most pragmatic next milestone for aligning the product with `frontend_prototype/` is P1:
+The most pragmatic next milestone for aligning the product with the original concept and `frontend_prototype/` is P1 Research Team Workspace:
 
 ```text
-Real evidence ingestion
-  -> evidence review queue
-  -> cited artifact generation
-  -> thesis validation
+Free-form topic
+  -> Chief of Staff / CIO Router
+  -> desk-scoped research tasks
+  -> team status / blockers / activity
+  -> desk artifacts
+  -> thesis challenge / refinement
   -> same committee proposal contract
-  -> same Playwright E2E workflow
 ```
 
-This keeps the current vertical slice intact while replacing the least realistic part of the demo: manual-only evidence entry and deterministic research text. The broader workspace should follow once it has trustworthy research records to organize.
+This keeps the current vertical slice intact while replacing the least product-like part of the demo: the user cannot yet manage an AI research team. Evidence ingestion and citation validation remain important, but they should be planned as trust infrastructure that supports desk work and thesis review.
