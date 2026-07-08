@@ -24,6 +24,7 @@ asr = [
 
 [dependency-groups]
 dev = [
+    "pre-commit>=4.0",
     "pytest",
     "pytest-asyncio",
     "ruff>=0.15.6",

@@ -1,12 +1,14 @@
 API_HOST ?= 127.0.0.1
 API_PORT ?= 8001
 
-.PHONY: help sync sync-asr api web web-sync web-typecheck web-build test test-api test-source-tools test-e2e lint format check smoke-api
+.PHONY: help sync sync-asr install-hooks validate-hooks api web web-sync web-typecheck web-build test test-api test-source-tools test-e2e lint format check smoke-api
 
 help:
 	@echo "Development commands:"
 	@echo "  make sync              Install development dependencies"
 	@echo "  make sync-asr          Install development dependencies with ASR extras"
+	@echo "  make install-hooks     Install pre-commit and commit-msg hooks"
+	@echo "  make validate-hooks    Validate pre-commit configuration"
 	@echo "  make web-sync          Install frontend dependencies"
 	@echo "  make api               Run the FastAPI development server"
 	@echo "  make web               Run the Next.js development server"
@@ -26,6 +28,13 @@ sync:
 
 sync-asr:
 	uv sync --group dev --extra asr
+
+install-hooks:
+	uv run pre-commit install
+	uv run pre-commit install --hook-type commit-msg
+
+validate-hooks:
+	uv run pre-commit validate-config
 
 api:
 	uv run uvicorn studio_api.main:app --reload --app-dir src --host $(API_HOST) --port $(API_PORT)

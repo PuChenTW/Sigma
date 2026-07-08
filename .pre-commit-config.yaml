@@ -1,0 +1,20 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-lint
+        name: Run Ruff lint
+        entry: make lint
+        language: system
+        pass_filenames: false
+
+      - id: python-tests
+        name: Run Python tests
+        entry: make test
+        language: system
+        pass_filenames: false
+
+      - id: commit-message
+        name: Check commit message
+        entry: uv run python scripts/check_commit_message.py
+        language: system
+        stages: [commit-msg]

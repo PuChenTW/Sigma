@@ -115,6 +115,7 @@ make web-typecheck
 
 ```bash
 make sync
+make install-hooks
 make web-sync
 make api
 make web
