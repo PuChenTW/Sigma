@@ -60,7 +60,7 @@ Already covered by the current MVP:
 
 - Free-form topic submission.
 - Project, tasks, evidence, citations, artifacts, thesis, proposal, and decision.
-- Manual Evidence Workbench plus curated fallback evidence.
+- Backend evidence/citation contracts plus curated fallback evidence; the frontend shows citation traceability but no longer ships a standalone Evidence Workbench.
 - Deterministic demo path without network or LLM dependencies.
 - Playwright coverage for the primary flow.
 
@@ -96,6 +96,7 @@ Defer:
 - Live autonomous source discovery.
 - Broad source ingestion and document parsing.
 - Per-excerpt evidence approval as a primary user workflow.
+- A standalone Evidence Workbench separate from research assignment or thesis challenge workflows.
 - Custom desk builder.
 
 ### P2 - Thesis Lifecycle And Evidence Traceability
@@ -107,7 +108,7 @@ Ship:
 - Thesis library across projects.
 - Thesis detail with evidence, assumptions, catalysts, risks, and invalidation conditions.
 - Thesis challenge/refinement workflow.
-- URL/article and note/document source intake where the research workspace needs it.
+- URL/article and note/document source intake where the research workspace needs it, integrated into task intake or thesis challenge/refinement.
 - Evidence review for cited excerpts and high-impact claims.
 - Artifact and thesis generation grounded in project evidence or explicit assumptions.
 - Optional additional fixed desks after repeated need is proven.

@@ -66,7 +66,7 @@ flowchart TD
 
 ## Core Components
 
-- `frontend`: topic submission, project status, manual Evidence Workbench, thesis review, proposal review, and approve/reject UI.
+- `frontend`: topic submission, project status, citation trace inspection, thesis review, proposal review, and approve/reject UI. New evidence capture should be integrated into assignment or thesis challenge workflows instead of a standalone Workbench.
 - `src/studio_api`: route handlers, request validation, orchestration entrypoints, response shaping, and local persistence access.
 - `src/studio_schemas`: Pydantic contracts shared by API, persistence, and workflow code.
 - `src/studio_domain`: small domain rules such as proposal decision transitions and project-scoped citation ownership.
@@ -174,7 +174,7 @@ synthesize_thesis(project, artifacts) -> Thesis
 evaluate_committee(thesis, candidate_asset) -> DecisionProposal
 ```
 
-The current evidence policy is deliberately simple: cited user evidence wins for its desk, and curated SMR fixtures fill only desks without cited user evidence. Manual evidence entry proves source-grounded traceability before the product adds URL, document, transcript, or RSS ingestion. Evidence review should be introduced as a trust boundary for cited claims and high-impact excerpts, not as the primary product workflow.
+The current evidence policy is deliberately simple: cited user evidence wins for its desk, and curated SMR fixtures fill only desks without cited user evidence. Backend manual evidence entry remains an API-level traceability contract, but the frontend no longer exposes a standalone Evidence Workbench. Future source intake should attach to research assignment and thesis challenge/refinement flows before the product adds URL, document, transcript, or RSS ingestion. Evidence review should be introduced as a trust boundary for cited claims and high-impact excerpts, not as the primary product workflow.
 
 Add autonomous planning only after there are enough real task patterns to justify it.
 

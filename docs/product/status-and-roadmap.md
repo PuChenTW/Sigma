@@ -29,14 +29,16 @@ Implemented areas:
 - Deterministic workflow runner under `src/studio_workflows`.
 - Curated SMR evidence fixtures.
 - Project creation currently accepts a free-form `topic` only; `priority`, `facets`, task dependencies, and blockers are P1 concepts, not current API fields.
-- Project-scoped Evidence Workbench for manual note/article evidence creation.
+- Project-scoped evidence and citation API contracts for source-grounded traceability; the standalone frontend Evidence Workbench has been removed.
 - Runner policy that prefers cited user evidence by desk and uses curated fixtures only for missing desk coverage.
 - Cited artifact generation.
 - Thesis synthesis with candidate asset rationale.
 - Trading Committee stub behind an explicit interface.
 - Proposal approve/reject endpoints and persisted decision records.
 - Research workflow run endpoint: `POST /research-projects/{project_id}/run-research`.
-- Thin Next.js workflow UI under `frontend`.
+- Next.js UI under `frontend` now uses a prototype-aligned workspace shell with dashboard, research workspace, Decision Desk, position preview, and assignment views.
+- The research workflow, citation trace, committee evaluation, and approve/reject paths are API-backed; dashboard aggregates API-backed project/artifact/proposal state where available.
+- Prototype-parity surfaces for broader report library, position workspace, team status, and assignment facets are currently mock-backed previews until the matching API/domain records exist.
 - Playwright E2E coverage for the primary approve/reject paths and user evidence traceability.
 - `src/source_tools` is retained as independent reusable source infrastructure; the current Studio MVP runtime does not depend on it.
 - Makefile commands for common development, test, lint, build, and E2E flows.
@@ -44,14 +46,15 @@ Implemented areas:
 ## Current Limitations
 
 - Research output is still deterministic; user evidence affects citation selection, but artifact and thesis prose are not yet generated from live source analysis.
-- Evidence entry is manual only. There is no server-side URL fetching, article extraction, PDF parsing, transcript ingestion, RSS discovery, market data, or LLM dependency in the current Studio workflow.
+- Evidence entry exists only as backend API infrastructure. There is no standalone frontend workbench, server-side URL fetching, article extraction, PDF parsing, transcript ingestion, RSS discovery, market data, or LLM dependency in the current Studio workflow.
 - The Trading Committee is a stub and does not run TradingAgents.
 - Approval or rejection records an investment decision only. It does not create trades, positions, or brokerage side effects.
-- The UI does not yet match the broader prototype experience in `frontend_prototype/`: there is no dashboard, research report library, multi-topic task queue, decision desk with multiple proposals, position workspace, or execution reporting flow.
-- The product does not yet feel like an AI research team: there is no Chief of Staff / CIO Router, visible desk ownership, task dependency graph, blocker state, or user challenge/refinement loop.
+- The UI now exposes prototype-like dashboard, research, decision, position, and assignment surfaces, but several are preview-only and not yet backed by durable domain/API records.
+- There is still no API-backed Chief of Staff / CIO Router, task dependency graph, blocker state, thesis challenge/refinement loop, multiple-proposal queue, position lifecycle, or execution reporting flow.
+- The visible research team model is a frontend preview; backend task ownership is still limited to the current deterministic desk tasks.
 - Local JSON persistence is for development and demo use, not production deployment.
 - There is no production auth, background job system, deployment story, or observability stack.
-- The UI is a workflow proof, not a full dashboard or design system.
+- The UI is moving from workflow proof toward prototype parity, but the API contract and domain records for the broader workspace are not complete.
 
 ## Useful Commands
 
@@ -98,9 +101,9 @@ The prototype's trading dashboard, active positions, and execution flows are lat
 
 Recommended order:
 
-1. Add the research team workspace shell: Chief of Staff topic routing, desk tasks, task statuses, blockers, activity timeline, and project switching.
+1. Convert the prototype-aligned frontend previews into API-backed records in priority order: research team routing, desk tasks, blockers, activity, and project switching.
 2. Add thesis challenge/refinement and richer desk artifacts so the user can steer research before a decision proposal exists.
-3. Improve source intake and evidence traceability where the workspace needs it: URLs, notes, transcripts/PDFs later, cited excerpts, and validation that claims resolve to approved or explicit evidence.
+3. Improve source intake and evidence traceability where the workspace needs it: task intake attachments, challenge/refinement attachments, URLs, notes, transcripts/PDFs later, cited excerpts, and validation that claims resolve to approved or explicit evidence.
 4. Allow multiple proposals and a richer Decision Desk once thesis/proposal traceability remains solid.
 5. Add user-entered paper/manual position tracking after approved decisions have useful lifecycle semantics.
 6. Add market data, portfolio dashboards, durable infrastructure, real committee engines, and production concerns only when the workflow requires them.
@@ -113,7 +116,9 @@ Current stance:
 
 - P0 is implemented as a deterministic local research workflow.
 - P1 should be corrected to Research Team Workspace: a product-facing milestone that makes the Studio feel like managing an AI research team.
+- The frontend shell now previews that P1 shape, but the product milestone is not complete until its visible team, assignment, blocker, challenge, and activity concepts are backed by durable API/domain records.
 - Real evidence ingestion and approval should become an enabling trust slice inside or after the workspace milestone, not the whole product-facing P1.
+- New evidence capture should be integrated into research task intake and thesis challenge/refinement flows, not restored as a separate top-level workbench.
 - P3-P5 should wait until proposal traceability, decision lifecycle, and paper position semantics are stable.
 
 Do not start a later phase only to make the UI look complete. Start it when the earlier phase has a working end-to-end path, focused tests, and clear domain records to aggregate.
@@ -127,7 +132,7 @@ Goal:
 Possible work:
 
 - Add a Chief of Staff / CIO Router that turns a free-form topic into a project objective and desk-scoped research tasks.
-- Show a research team board with desks, assigned tasks, statuses, blockers, dependencies, and activity.
+- Back the prototype-style research team board with real desks, assigned tasks, statuses, blockers, dependencies, and activity.
 - Expand fixed desks toward the original product model: Industry, Macro, Fundamental, Market Intelligence, Quant / Technical, and Narrative.
 - Add thesis detail actions for challenge, refine, request-more-research, and record why a thesis changed.
 - Keep deterministic task planning/artifact generation as the testable baseline until agentic research is introduced.
@@ -187,7 +192,7 @@ This should happen after the proposal contract is stable and after P1/P2 produce
 
 Goal:
 
-- Make the workflow easier to use without turning it into a broad dashboard project.
+- Turn the prototype-aligned frontend shell into an API-backed workflow without letting mock-backed dashboard surfaces define false product state.
 
 Possible work:
 
@@ -195,7 +200,9 @@ Possible work:
 - Add clearer evidence and citation inspection.
 - Add thesis challenge/refinement actions.
 - Add proposal history and decision history views.
-- Keep portfolio dashboards and position management deferred.
+- Keep portfolio dashboards and position management preview-only until approved decisions have useful lifecycle semantics.
+- Keep frontend data adapters explicit: existing API-backed workflow state should stay separate from mock-backed preview data.
+- Do not reintroduce a standalone Evidence Workbench; source intake belongs inside assignment and thesis-review workflows.
 
 Use Playwright for every meaningful frontend workflow change.
 
