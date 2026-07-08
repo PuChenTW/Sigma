@@ -1,5 +1,5 @@
 API_HOST ?= 127.0.0.1
-API_PORT ?= 8000
+API_PORT ?= 8001
 
 .PHONY: help sync sync-asr api web web-sync web-typecheck web-build test test-api test-source-tools test-e2e lint format check smoke-api
 

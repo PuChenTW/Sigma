@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from studio_api.dependencies import get_store
+from studio_api.openapi import CONFLICT_RESPONSE, PROPOSAL_NOT_FOUND_RESPONSE
 from studio_api.storage import JsonStore
 from studio_domain import ensure_pending_proposal
 from studio_schemas import ActivityEvent, ActivityEventType, DecisionProposal, DecisionRequest, DecisionType, InvestmentDecision, ProposalStatus
@@ -11,17 +12,41 @@ router = APIRouter(prefix="/decision-proposals", tags=["decision-proposals"])
 StoreDep = Annotated[JsonStore, Depends(get_store)]
 
 
-@router.get("/{proposal_id}", response_model=DecisionProposal)
+@router.get(
+    "/{proposal_id}",
+    response_model=DecisionProposal,
+    summary="Get decision proposal",
+    description="Return one committee decision proposal by ID, including action, status, risk controls, rationale, and citation links.",
+    response_description="The requested decision proposal.",
+    responses=PROPOSAL_NOT_FOUND_RESPONSE,
+)
 def get_proposal(proposal_id: str, store: StoreDep) -> DecisionProposal:
     return _get_proposal_or_404(store, proposal_id)
 
 
-@router.post("/{proposal_id}/approve", response_model=InvestmentDecision)
+@router.post(
+    "/{proposal_id}/approve",
+    response_model=InvestmentDecision,
+    summary="Approve decision proposal",
+    description=(
+        "Record the user's approval of a pending proposal and mark the proposal approved. "
+        "Approval creates an investment decision record only; it does not execute a trade or create a position."
+    ),
+    response_description="The persisted investment decision record.",
+    responses={**PROPOSAL_NOT_FOUND_RESPONSE, **CONFLICT_RESPONSE},
+)
 def approve_proposal(proposal_id: str, request: DecisionRequest, store: StoreDep) -> InvestmentDecision:
     return _record_decision(store, proposal_id, DecisionType.APPROVED, ProposalStatus.APPROVED, request.user_note)
 
 
-@router.post("/{proposal_id}/reject", response_model=InvestmentDecision)
+@router.post(
+    "/{proposal_id}/reject",
+    response_model=InvestmentDecision,
+    summary="Reject decision proposal",
+    description="Record the user's rejection of a pending proposal and preserve optional feedback for future research quality.",
+    response_description="The persisted investment decision record.",
+    responses={**PROPOSAL_NOT_FOUND_RESPONSE, **CONFLICT_RESPONSE},
+)
 def reject_proposal(proposal_id: str, request: DecisionRequest, store: StoreDep) -> InvestmentDecision:
     return _record_decision(store, proposal_id, DecisionType.REJECTED, ProposalStatus.REJECTED, request.user_note)
 

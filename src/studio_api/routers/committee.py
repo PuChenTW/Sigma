@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from studio_api.dependencies import get_store
+from studio_api.openapi import CONFLICT_RESPONSE, PROJECT_NOT_FOUND_RESPONSE
 from studio_api.storage import JsonStore
 from studio_domain import ensure_project_citations_resolve
 from studio_schemas import ActivityEvent, ActivityEventType, DecisionProposal, Evidence, ResearchProject, Thesis
@@ -12,7 +13,17 @@ router = APIRouter(prefix="/research-projects/{project_id}/committee", tags=["co
 StoreDep = Annotated[JsonStore, Depends(get_store)]
 
 
-@router.post("/evaluate", response_model=DecisionProposal)
+@router.post(
+    "/evaluate",
+    response_model=DecisionProposal,
+    summary="Evaluate project thesis",
+    description=(
+        "Send the latest project thesis through the Trading Committee boundary and create a bounded decision proposal. "
+        "The committee receives compact research context; it does not own research projects, evidence, or thesis lifecycle."
+    ),
+    response_description="The created or existing decision proposal for the latest thesis.",
+    responses={**PROJECT_NOT_FOUND_RESPONSE, **CONFLICT_RESPONSE},
+)
 def evaluate_project(project_id: str, store: StoreDep) -> DecisionProposal:
     project = _get_project_or_404(store, project_id)
     thesis = _get_project_thesis_or_409(store, project.id)
