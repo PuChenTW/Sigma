@@ -1,13 +1,10 @@
 "use client";
 
-import { ChartNoAxesColumn, Check, LayoutDashboard, NotebookTabs, Play, Plus, Send, ShieldCheck, X } from "lucide-react";
+import { ChartNoAxesColumn, Check, LayoutDashboard, NotebookTabs, Play, Send, ShieldCheck, X } from "lucide-react";
 import { FormEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import {
   ActivityEvent,
-  CreateEvidenceRequest,
   DecisionProposal,
-  EvidenceDesk,
-  EvidenceSourceType,
   Evidence,
   EvidenceCitation,
   InvestmentDecision,
@@ -19,30 +16,8 @@ import {
   apiRequest,
 } from "../lib/api";
 
-type Step = "idle" | "creating" | "addingEvidence" | "running" | "evaluating" | "deciding";
+type Step = "idle" | "creating" | "running" | "evaluating" | "deciding";
 type WorkspaceView = "dashboard" | "decision" | "positions" | "research" | "assign";
-
-type EvidenceFormState = {
-  source_type: EvidenceSourceType;
-  desk: EvidenceDesk;
-  title: string;
-  url: string;
-  summary: string;
-  label: string;
-  excerpt: string;
-  location: string;
-};
-
-const initialEvidenceForm: EvidenceFormState = {
-  source_type: "note",
-  desk: "industry",
-  title: "",
-  url: "",
-  summary: "",
-  label: "",
-  excerpt: "",
-  location: "manual note",
-};
 
 const teamMembers = [
   { tag: "TR", name: "Trader", role: "Trading Committee", status: "deciding", focus: "Reviewing thesis-backed proposals and risk controls." },
@@ -99,7 +74,6 @@ export default function StudioWorkflowPage() {
   const [decision, setDecision] = useState<InvestmentDecision | null>(null);
   const [events, setEvents] = useState<ActivityEvent[]>([]);
   const [note, setNote] = useState("");
-  const [evidenceForm, setEvidenceForm] = useState<EvidenceFormState>(initialEvidenceForm);
   const [view, setView] = useState<WorkspaceView>("dashboard");
   const [step, setStep] = useState<Step>("idle");
   const [error, setError] = useState<string | null>(null);
@@ -217,51 +191,6 @@ export default function StudioWorkflowPage() {
       await loadProjectState(result.project.id);
     } catch (runError) {
       setError(errorMessage(runError));
-    } finally {
-      setStep("idle");
-    }
-  }
-
-  async function addEvidence(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!project) {
-      return;
-    }
-
-    setStep("addingEvidence");
-    setError(null);
-
-    const request: CreateEvidenceRequest = {
-      source_type: evidenceForm.source_type,
-      desk: evidenceForm.desk,
-      title: evidenceForm.title,
-      url: evidenceForm.url.trim() || null,
-      summary: evidenceForm.summary,
-      citations: [
-        {
-          label: evidenceForm.label.trim() || null,
-          excerpt: evidenceForm.excerpt,
-          location: evidenceForm.location,
-        },
-      ],
-    };
-
-    try {
-      await apiRequest(`/research-projects/${project.id}/evidence`, {
-        method: "POST",
-        body: JSON.stringify(request),
-      });
-      setEvidenceForm((current) => ({
-        ...current,
-        title: "",
-        url: "",
-        summary: "",
-        label: "",
-        excerpt: "",
-      }));
-      await loadProjectState(project.id);
-    } catch (evidenceError) {
-      setError(errorMessage(evidenceError));
     } finally {
       setStep("idle");
     }
@@ -521,90 +450,6 @@ export default function StudioWorkflowPage() {
             </div>
 
             <div className="col">
-            <section className="panel evidence-panel">
-              <PanelTitle eyebrow="EVIDENCE" title="Evidence workbench" />
-              <form className="evidence-form" onSubmit={addEvidence}>
-                <div className="field-row">
-                  <label>
-                    <span>Source</span>
-                    <select
-                      value={evidenceForm.source_type}
-                      onChange={(event) => setEvidenceForm((current) => ({ ...current, source_type: event.target.value as EvidenceSourceType }))}
-                    >
-                      <option value="note">Note</option>
-                      <option value="article">Article</option>
-                    </select>
-                  </label>
-                  <label>
-                    <span>Desk</span>
-                    <select value={evidenceForm.desk} onChange={(event) => setEvidenceForm((current) => ({ ...current, desk: event.target.value as EvidenceDesk }))}>
-                      <option value="industry">Industry</option>
-                      <option value="macro_policy">Macro / policy</option>
-                      <option value="fundamental">Fundamental</option>
-                    </select>
-                  </label>
-                </div>
-                <label>
-                  <span>Title</span>
-                  <input value={evidenceForm.title} onChange={(event) => setEvidenceForm((current) => ({ ...current, title: event.target.value }))} />
-                </label>
-                <label>
-                  <span>URL</span>
-                  <input value={evidenceForm.url} onChange={(event) => setEvidenceForm((current) => ({ ...current, url: event.target.value }))} />
-                </label>
-                <label>
-                  <span>Summary</span>
-                  <textarea value={evidenceForm.summary} onChange={(event) => setEvidenceForm((current) => ({ ...current, summary: event.target.value }))} rows={3} />
-                </label>
-                <div className="field-row">
-                  <label>
-                    <span>Citation label</span>
-                    <input value={evidenceForm.label} onChange={(event) => setEvidenceForm((current) => ({ ...current, label: event.target.value }))} />
-                  </label>
-                  <label>
-                    <span>Location</span>
-                    <input value={evidenceForm.location} onChange={(event) => setEvidenceForm((current) => ({ ...current, location: event.target.value }))} />
-                  </label>
-                </div>
-                <label>
-                  <span>Excerpt</span>
-                  <textarea value={evidenceForm.excerpt} onChange={(event) => setEvidenceForm((current) => ({ ...current, excerpt: event.target.value }))} rows={3} />
-                </label>
-                <button type="submit" disabled={!project || step !== "idle"}>
-                  <Plus size={15} />
-                  Add evidence
-                </button>
-              </form>
-
-              <div className="evidence-library">
-                {evidence.length > 0 ? (
-                  evidence.map((item) => {
-                    const itemCitations = citations.filter((citation) => citation.evidence_id === item.id);
-                    return (
-                      <article key={item.id} className="evidence-item">
-                        <div className="evidence-heading">
-                          <div>
-                            <h3>{item.title}</h3>
-                            <span>{String(item.metadata.desk ?? item.source_type).replaceAll("_", " ")}</span>
-                          </div>
-                          <StatusBadge value={String(item.metadata.origin ?? item.source_type)} />
-                        </div>
-                        <p>{item.summary}</p>
-                        {itemCitations[0] ? (
-                          <div className="citation-preview">
-                            <strong>{itemCitations[0].label}</strong>
-                            <span>{itemCitations[0].excerpt}</span>
-                          </div>
-                        ) : null}
-                      </article>
-                    );
-                  })
-                ) : (
-                  <EmptyState label="Add evidence before running research, or run research to attach fixtures." />
-                )}
-              </div>
-            </section>
-
             <section className="panel proposal-panel">
               <PanelTitle eyebrow="DESK" title="Proposal review" />
               {proposal ? (

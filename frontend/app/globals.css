@@ -877,83 +877,9 @@ button:focus-visible {
 .thesis-block,
 .proposal-block,
 .artifact-list,
-.evidence-form,
-.evidence-library,
 .activity-list {
   display: grid;
   gap: 13px;
-}
-
-.evidence-form {
-  gap: 12px;
-  margin-bottom: 18px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--border-soft);
-}
-
-.evidence-form label {
-  display: grid;
-  gap: 7px;
-  color: var(--body);
-  font-size: 12.5px;
-  font-weight: 500;
-}
-
-.field-row {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 11px;
-}
-
-.evidence-item {
-  display: grid;
-  gap: 8px;
-  border: 1px solid var(--border-soft);
-  border-radius: 12px;
-  padding: 14px 16px;
-  background: #fafbfc;
-}
-
-.evidence-heading {
-  display: flex;
-  align-items: start;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.evidence-heading h3 {
-  margin: 0;
-  font-size: 13.5px;
-  font-weight: 600;
-  overflow-wrap: anywhere;
-}
-
-.evidence-heading span {
-  display: inline-block;
-  margin-top: 3px;
-  font-size: 11px;
-  color: var(--ghost);
-}
-
-.evidence-item p,
-.citation-preview span {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12.5px;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-}
-
-.citation-preview {
-  display: grid;
-  gap: 4px;
-  border-left: 3px solid var(--accent);
-  padding-left: 10px;
-}
-
-.citation-preview strong {
-  color: var(--text);
-  font-size: 12.5px;
 }
 
 .task-row {
@@ -1296,7 +1222,6 @@ button:focus-visible {
   }
 
   .proposal-facts,
-  .field-row,
   .facet-grid,
   .statgrid4 {
     grid-template-columns: 1fr;

@@ -47,28 +47,6 @@ export type EvidenceCitation = {
   location: string;
 };
 
-export type EvidenceSourceType = "note" | "article";
-
-export type EvidenceDesk = "industry" | "macro_policy" | "fundamental";
-
-export type CreateEvidenceRequest = {
-  source_type: EvidenceSourceType;
-  desk: EvidenceDesk;
-  title: string;
-  url: string | null;
-  summary: string;
-  citations: {
-    label: string | null;
-    excerpt: string;
-    location: string;
-  }[];
-};
-
-export type CreateEvidenceResponse = {
-  evidence: Evidence;
-  citations: EvidenceCitation[];
-};
-
 export type Thesis = {
   id: string;
   project_id: string;
