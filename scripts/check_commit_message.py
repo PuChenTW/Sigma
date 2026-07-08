@@ -4,7 +4,7 @@ import re
 import sys
 from pathlib import Path
 
-MAX_SUBJECT_LENGTH = 72
+MAX_SUBJECT_LENGTH = 120
 VALID_TYPES = {
     "build",
     "chore",
